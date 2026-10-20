@@ -1,0 +1,1722 @@
+<title>iGEM Learning Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,300..400&family=Geist:wght@300..600&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: glass sidebar = learning path (13 modules, unlock state, section jump links); main stage = dashboard timeline or module page (goals → content → Wissenscheck → unlock). Colour per module from a lively six-tone palette. */
+:root{
+  --bg:#f6f6fb;
+  --ink:#1d1b2e;
+  --muted:#625f7a;
+  --faint:#a4a2b8;
+  --glass:rgba(255,255,255,.5);
+  --glass-strong:rgba(255,255,255,.84);
+  --stroke:rgba(255,255,255,.9);
+  --hair:rgba(29,27,46,.09);
+  --highlight:rgba(255,255,255,1);
+  --shadow:rgba(60,40,120,.16);
+  --accent:#5b3fe0;
+  --accent-soft:rgba(91,63,224,.09);
+  --on-accent:#ffffff;
+  --c1:#0fa898; --c2:#7255f5; --c3:#f05d50; --c4:#e8960f; --c5:#2f8cf0; --c6:#e0408c;
+  --grad:linear-gradient(115deg,var(--c1),var(--c5) 35%,var(--c2) 65%,var(--c3));
+  --glow-a:rgba(20,184,166,.45); --glow-b:rgba(124,92,255,.38); --glow-c:rgba(255,107,94,.36); --glow-d:rgba(245,165,36,.36);
+  --good:#0c9482; --bad:#dc3f55;
+  --f-serif:"Newsreader","Iowan Old Style","New York",Georgia,serif;
+  --f-sans:"Geist","SF Pro Text",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --f-mono:"Geist Mono","SF Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0b0a14; --ink:#efeef7; --muted:#a6a3bd; --faint:#64627c;
+  --glass:rgba(24,22,40,.52); --glass-strong:rgba(34,31,56,.86);
+  --stroke:rgba(255,255,255,.09); --hair:rgba(255,255,255,.09);
+  --highlight:rgba(255,255,255,.08); --shadow:rgba(0,0,0,.55);
+  --accent:#b3a4ff; --accent-soft:rgba(179,164,255,.12); --on-accent:#120c2e;
+  --c1:#2fd3c0; --c2:#9b85ff; --c3:#ff7d71; --c4:#ffb43c; --c5:#5aa8ff; --c6:#ff69ac;
+  --glow-a:rgba(20,184,166,.30); --glow-b:rgba(124,92,255,.34); --glow-c:rgba(255,107,94,.24); --glow-d:rgba(245,165,36,.20);
+  --good:#4fd8c5; --bad:#ff8a97;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0b0a14; --ink:#efeef7; --muted:#a6a3bd; --faint:#64627c;
+  --glass:rgba(24,22,40,.52); --glass-strong:rgba(34,31,56,.86);
+  --stroke:rgba(255,255,255,.09); --hair:rgba(255,255,255,.09);
+  --highlight:rgba(255,255,255,.08); --shadow:rgba(0,0,0,.55);
+  --accent:#b3a4ff; --accent-soft:rgba(179,164,255,.12); --on-accent:#120c2e;
+  --c1:#2fd3c0; --c2:#9b85ff; --c3:#ff7d71; --c4:#ffb43c; --c5:#5aa8ff; --c6:#ff69ac;
+  --glow-a:rgba(20,184,166,.30); --glow-b:rgba(124,92,255,.34); --glow-c:rgba(255,107,94,.24); --glow-d:rgba(245,165,36,.20);
+  --good:#4fd8c5; --bad:#ff8a97;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-sans);font-size:15.5px;line-height:1.7;font-weight:350;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,h3{font-family:var(--f-serif);font-weight:300;text-wrap:balance;margin:0;letter-spacing:-.005em;line-height:1.15}
+h1 em,h2 em{font-style:italic;background:var(--grad);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:.06em;animation:sheen 12s ease-in-out infinite alternate}
+@keyframes sheen{to{background-position:100% 0}}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:disabled{cursor:default}
+a{color:inherit}
+strong{font-weight:550}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:10px}
+.label{font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);font-weight:450}
+.ic{width:1em;height:1em;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* Ambient light */
+.ambient{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.glow{position:absolute;border-radius:50%;filter:blur(100px)}
+.glow.a{width:55vw;height:55vw;left:-15vw;top:-20vw;background:var(--glow-a);animation:float 36s ease-in-out infinite alternate}
+.glow.b{width:45vw;height:45vw;right:-12vw;top:10vh;background:var(--glow-b);animation:float 44s ease-in-out infinite alternate-reverse}
+.glow.c{width:40vw;height:40vw;left:25vw;bottom:-22vw;background:var(--glow-c);animation:float 50s ease-in-out infinite alternate}
+.glow.d{width:30vw;height:30vw;right:15vw;bottom:-10vw;background:var(--glow-d);animation:float 40s ease-in-out -10s infinite alternate-reverse}
+@keyframes float{to{transform:translate3d(5vw,3vh,0) scale(1.08)}}
+
+.glass{background:var(--glass);backdrop-filter:blur(30px) saturate(160%);-webkit-backdrop-filter:blur(30px) saturate(160%);border:1px solid var(--stroke);box-shadow:inset 0 1px 0 var(--highlight),0 30px 70px -40px var(--shadow)}
+
+/* Shell */
+.shell{position:relative;z-index:1;display:grid;grid-template-columns:300px minmax(0,1fr);gap:28px;padding-inline:20px;padding-block:20px;max-width:1440px;margin:0 auto;min-height:100dvh}
+
+/* Sidebar */
+.sidebar{position:sticky;top:calc(20px + env(safe-area-inset-top,0px));height:calc(100dvh - 40px);border-radius:28px;display:flex;flex-direction:column;overflow:hidden}
+.brand{display:flex;align-items:center;gap:12px;border:0;background:none;padding:24px 22px 14px;text-align:left}
+.brand-mark{width:32px;height:32px;border-radius:50%;flex:none;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.75),transparent 55%),conic-gradient(from 200deg,var(--c1),var(--c5),var(--c2),var(--c3),var(--c4),var(--c1));box-shadow:0 6px 16px -6px var(--glow-b)}
+.brand b{display:block;font-family:var(--f-serif);font-weight:400;font-size:19px;line-height:1.2}
+.brand small{font-size:12px;color:var(--muted)}
+.side-nav{flex:1;overflow-y:auto;padding:4px 12px 14px;scrollbar-width:thin}
+.home-link{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;padding:10px 12px;border-radius:14px;text-align:left;font-size:14.5px;color:var(--muted)}
+.home-link .ic{font-size:16px}
+.home-link:hover{background:var(--hair);color:var(--ink)}
+.home-link[aria-current="page"]{background:var(--glass-strong);color:var(--ink);box-shadow:0 6px 18px -10px var(--shadow)}
+.nav-label{display:block;padding:18px 12px 8px}
+.mrow{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;padding:7px 10px;border-radius:14px;text-align:left}
+.mrow:hover{background:var(--hair)}
+.mrow[aria-current="page"]{background:color-mix(in srgb,var(--tone) 14%,var(--glass-strong));box-shadow:0 6px 18px -10px var(--shadow)}
+.mname{font-family:var(--f-serif);font-size:16.5px;font-weight:400;line-height:1.25;min-width:0}
+.mrow.locked .mname{color:var(--faint)}
+.badge{width:28px;height:28px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:12.5px;font-weight:500;font-variant-numeric:tabular-nums;color:var(--tone);border:1.5px solid var(--tone);background:color-mix(in srgb,var(--tone) 10%,transparent)}
+.badge .ic{font-size:14px;stroke-width:2.4}
+.done .badge,.badge.done{background:var(--tone);color:#fff;border-color:var(--tone);box-shadow:0 4px 12px -4px var(--tone)}
+.locked .badge,.badge.locked{color:var(--faint);border-color:var(--hair);background:var(--hair)}
+.locked .badge .ic{stroke-width:1.8}
+.subnav{display:grid;gap:1px;padding:4px 0 10px 50px}
+.subnav button{border:0;background:none;text-align:left;padding:5px 10px;border-radius:10px;font-size:13.5px;color:var(--muted);line-height:1.4}
+.subnav button:hover{color:var(--ink);background:var(--hair)}
+.subnav .sub-game{display:flex;align-items:center;gap:6px;color:var(--tone);font-weight:450}
+.side-prog{padding:14px 22px 4px;border-top:1px solid var(--hair)}
+.sp-top{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;color:var(--muted)}
+.track{height:4px;border-radius:9px;background:var(--hair);overflow:hidden;margin-top:9px}
+.track i{display:block;height:100%;background:var(--grad);border-radius:9px;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.side-tools{display:grid;gap:2px;padding:10px 14px 0}
+.tool{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;text-align:left;font-size:13px;color:var(--muted);padding:7px 8px;border-radius:10px}
+.tool:hover{background:var(--hair);color:var(--ink)}
+.sw{width:28px;height:16px;border-radius:99px;background:var(--hair);position:relative;flex:none;transition:background .3s}
+.sw::after{content:"";position:absolute;left:2px;top:2px;width:12px;height:12px;border-radius:50%;background:var(--glass-strong);box-shadow:0 1px 3px var(--shadow);transition:transform .3s}
+[aria-pressed="true"] .sw{background:var(--accent)}
+[aria-pressed="true"] .sw::after{transform:translateX(12px);background:#fff}
+.confirm{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:6px 8px;font-size:13px;color:var(--muted)}
+.confirm button{border:1px solid var(--hair);background:var(--glass-strong);border-radius:99px;padding:4px 12px;font-size:12.5px}
+.confirm .danger{background:var(--bad);color:#fff;border-color:transparent}
+.side-foot{display:flex;align-items:center;gap:10px;padding:10px 16px 18px 22px}
+.side-foot a{flex:1;font-size:13px;color:var(--muted);text-decoration:none}
+.side-foot a:hover{color:var(--ink)}
+.round{width:36px;height:36px;border-radius:50%;border:0;background:var(--hair);display:grid;place-items:center;color:var(--ink);flex:none}
+.round .ic{font-size:16px}
+.round:hover{background:var(--accent-soft)}
+
+/* Main */
+main{min-width:0;display:flex;flex-direction:column;gap:24px}
+.topbar{display:none;align-items:center;gap:12px;padding:8px 14px 8px 8px;border-radius:999px;position:sticky;top:calc(10px + env(safe-area-inset-top,0px));z-index:5}
+.topbar b{font-family:var(--f-serif);font-weight:400;font-size:18px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar span{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;border-radius:999px;padding:12px 22px;font-size:14.5px;font-weight:450;border:1px solid var(--hair);background:var(--glass-strong);transition:transform .3s cubic-bezier(.2,.8,.2,1),background-position .6s,opacity .3s}
+.btn:hover:not(:disabled){transform:translateY(-1px)}
+.btn:disabled{opacity:.45}
+.btn .ic{font-size:15px}
+.btn.dark{background:var(--grad);background-size:180% 100%;color:#fff;border-color:transparent;box-shadow:0 14px 30px -12px var(--glow-b)}
+.btn.dark:hover:not(:disabled){background-position:100% 0}
+.btn.small{padding:9px 16px;font-size:13.5px}
+
+/* Dashboard */
+.hero{border-radius:32px;padding:clamp(32px,5.5vw,64px);display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:36px;align-items:center;overflow:hidden;position:relative;isolation:isolate}
+.hero::before{content:"";position:absolute;inset:-20%;z-index:-1;background:radial-gradient(38% 48% at 82% 28%,var(--glow-b),transparent 70%),radial-gradient(34% 44% at 68% 88%,var(--glow-c),transparent 70%),radial-gradient(28% 38% at 98% 78%,var(--glow-d),transparent 70%),radial-gradient(30% 40% at 10% 0%,var(--glow-a),transparent 70%);animation:mesh 20s ease-in-out infinite alternate}
+@keyframes mesh{to{transform:translate3d(-4%,3%,0) rotate(4deg)}}
+.hero h1{font-size:clamp(36px,4.6vw,58px);margin:16px 0 18px;max-width:15ch}
+.hero .lead{color:var(--muted);font-size:16.5px;max-width:50ch}
+.cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.ring-wrap{position:relative;justify-self:center;width:min(230px,100%);aspect-ratio:1;max-width:100%}
+.ring-wrap svg{width:100%;height:100%;display:block}
+.ring-c{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+.ring-c b{font-family:var(--f-serif);font-weight:300;font-size:54px;line-height:1;font-variant-numeric:tabular-nums}
+.ring-c b small{font-size:.45em;color:var(--muted)}
+.ring-c span{font-size:13px;color:var(--muted);margin-top:6px}
+.stats{border-radius:26px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));overflow:hidden}
+.stat{padding:22px 26px}
+.stat+.stat{border-left:1px solid var(--hair)}
+.stat b{display:block;font-family:var(--f-serif);font-weight:300;font-size:34px;line-height:1.1;font-variant-numeric:tabular-nums}
+.stat span{font-size:13px;color:var(--muted)}
+.stat .track{margin-top:12px}
+.finish{border-radius:26px;padding:24px 28px;display:flex;align-items:center;gap:18px;background:linear-gradient(115deg,color-mix(in srgb,var(--c1) 22%,var(--glass)),color-mix(in srgb,var(--c2) 22%,var(--glass)),color-mix(in srgb,var(--c3) 18%,var(--glass)))}
+.finish h3{font-size:24px}
+.finish p{color:var(--muted);font-size:14.5px}
+.finish .badge{width:48px;height:48px;--tone:var(--c2)}
+.finish .badge .ic{font-size:22px}
+.section-head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:16px;padding:20px 6px 0}
+.section-head h2{font-size:clamp(28px,3vw,38px)}
+.section-head p{color:var(--muted);max-width:44ch;font-size:14.5px}
+
+.path{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.path-row{display:grid;grid-template-columns:52px minmax(0,1fr);gap:14px}
+.node{position:relative;display:flex;justify-content:center;padding-top:26px}
+.node::before{content:"";position:absolute;top:0;bottom:-12px;width:2px;background:var(--hair)}
+.path-row:first-child .node::before{top:26px}
+.path-row:last-child .node::before{bottom:auto;height:26px}
+.path-row.done .node::before{background:color-mix(in srgb,var(--tone) 45%,transparent)}
+.node .badge{width:40px;height:40px;font-size:14px;position:relative;background:var(--bg)}
+.node .badge::after{content:"";position:absolute;inset:0;border-radius:50%;background:color-mix(in srgb,var(--tone) 12%,transparent)}
+.done .node .badge{background:var(--tone)}
+.locked .node .badge{background:var(--bg)}
+.locked .node .badge::after{background:var(--hair)}
+.node .badge .ic{font-size:17px;position:relative;z-index:1}
+.next .node .badge{box-shadow:0 0 0 6px color-mix(in srgb,var(--tone) 18%,transparent)}
+.path-card{border-radius:22px;padding:18px 22px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:center;text-align:left;position:relative;overflow:hidden;transition:transform .45s cubic-bezier(.2,.8,.2,1),border-color .45s}
+.path-card::after{content:"";position:absolute;right:-60px;top:-70px;width:200px;height:200px;border-radius:50%;background:var(--tone);opacity:.16;filter:blur(40px);transition:opacity .45s;pointer-events:none}
+.path-card:hover{transform:translateX(4px);border-color:color-mix(in srgb,var(--tone) 40%,var(--stroke))}
+.path-card:hover::after{opacity:.32}
+.locked .path-card{opacity:.62}
+.locked .path-card::after{opacity:0}
+.pc-num{font-size:12px;color:var(--tone);font-weight:500;letter-spacing:.04em}
+.locked .pc-num{color:var(--faint)}
+.path-card h3{font-size:23px;font-weight:400;margin:2px 0 4px}
+.path-card p{font-size:14px;color:var(--muted)}
+.pc-side{display:flex;flex-direction:column;align-items:flex-end;gap:8px;position:relative;z-index:1}
+.pill{font-size:12px;padding:4px 11px;border-radius:99px;white-space:nowrap;font-weight:450}
+.pill.done{background:color-mix(in srgb,var(--good) 14%,transparent);color:var(--good)}
+.pill.open{background:color-mix(in srgb,var(--tone) 14%,transparent);color:var(--tone)}
+.pill.locked{background:var(--hair);color:var(--faint)}
+.pc-meta{font-size:12.5px;color:var(--faint);white-space:nowrap;font-variant-numeric:tabular-nums}
+
+footer{margin-top:auto;display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;padding:24px 6px 4px;border-top:1px solid var(--hair);font-size:12.5px;color:var(--faint)}
+
+/* Module page */
+.mod-page{display:flex;flex-direction:column;gap:22px}
+.mod-head{padding:28px 8px 8px;position:relative;isolation:isolate}
+.mod-head::before{content:"";position:absolute;left:-12%;top:-40%;width:75%;height:170%;z-index:-1;background:radial-gradient(closest-side,color-mix(in srgb,var(--tone) 38%,transparent),transparent);filter:blur(10px)}
+.crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.back{border:0;background:none;padding:0;color:var(--muted);font-size:13.5px;display:inline-flex;align-items:center;gap:6px}
+.back:hover{color:var(--ink)}
+.chap{display:inline-flex;align-items:center;padding:4px 12px;border-radius:999px;font-size:12.5px;font-weight:450;color:var(--tone);background:color-mix(in srgb,var(--tone) 14%,transparent);font-variant-numeric:tabular-nums}
+.mod-head h1{font-size:clamp(36px,4.6vw,56px);margin:18px 0 12px;max-width:20ch}
+.mod-head .intro{font-size:17.5px;color:var(--muted);max-width:56ch}
+.meta{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:18px;font-size:13.5px;color:var(--muted)}
+.meta span{display:inline-flex;align-items:center;gap:6px}
+.meta .ok{color:var(--good)}
+.goals{border-radius:24px;padding:22px 28px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 28px;align-items:start}
+.goals ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 10px}
+.goals li{font-size:14px;padding:6px 14px;border-radius:99px;background:color-mix(in srgb,var(--tone) 11%,var(--glass-strong));border:1px solid color-mix(in srgb,var(--tone) 20%,transparent)}
+.paper{border-radius:30px;padding:clamp(28px,5vw,60px) clamp(20px,5.5vw,68px)}
+.prose{max-width:68ch;margin:0 auto;display:flex;flex-direction:column;gap:44px}
+.sec{display:flex;flex-direction:column;gap:16px;scroll-margin-top:28px}
+.sec h2{font-size:clamp(26px,2.6vw,32px);font-weight:400;display:flex;align-items:baseline;gap:14px}
+.sec h2::before{content:attr(data-n);font-family:var(--f-sans);font-size:13px;font-weight:500;color:var(--tone);letter-spacing:.06em;flex:none;transform:translateY(-3px)}
+.prose p,.prose li,.prose dd{font-size:16.5px;line-height:1.75}
+.prose ul,.prose ol{margin:0;padding:0;list-style:none;display:grid;gap:10px}
+.prose ul>li{position:relative;padding-left:22px}
+.prose ul>li::before{content:"";position:absolute;left:3px;top:.72em;width:7px;height:7px;border-radius:50%;background:var(--tone)}
+.prose ol{counter-reset:o}
+.prose ol>li{counter-increment:o;position:relative;padding-left:40px}
+.prose ol>li::before{content:counter(o);position:absolute;left:0;top:.15em;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:12.5px;font-weight:500;color:var(--tone);background:color-mix(in srgb,var(--tone) 13%,transparent)}
+.terms{margin:0;display:grid;border-top:1px solid var(--hair)}
+.terms>div{display:grid;grid-template-columns:150px minmax(0,1fr);gap:18px;padding:14px 0;border-bottom:1px solid var(--hair)}
+.terms dt{font-family:var(--f-serif);font-size:19px;font-weight:400;color:var(--tone);line-height:1.4}
+.terms dd{margin:0}
+.facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.fact{border-radius:18px;padding:16px;background:color-mix(in srgb,var(--tone) 9%,var(--glass-strong));border:1px solid var(--hair)}
+.fact b{display:block;font-family:var(--f-serif);font-weight:400;font-size:26px;line-height:1.15;font-variant-numeric:tabular-nums}
+.fact span{font-size:13px;color:var(--muted);line-height:1.45;display:block;margin-top:4px}
+.merke{border-radius:22px;padding:22px 26px;background:linear-gradient(120deg,color-mix(in srgb,var(--tone) 18%,transparent),color-mix(in srgb,var(--c4) 10%,transparent))}
+.merke .label{color:var(--tone)}
+.merke p{font-family:var(--f-serif);font-size:21px !important;line-height:1.45 !important;margin-top:6px}
+.tbl{overflow-x:auto;border-radius:18px;border:1px solid var(--hair);background:var(--glass-strong)}
+.tbl table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:520px}
+.tbl th,.tbl td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--hair);vertical-align:top}
+.tbl tr:last-child td{border-bottom:0}
+.tbl th{font-weight:500;font-size:12.5px;color:var(--muted);letter-spacing:.04em}
+.mono{font-family:var(--f-mono);font-size:.92em;letter-spacing:.02em}
+.diagram{margin:0;border-radius:20px;padding:18px;background:var(--glass-strong);border:1px solid var(--hair);overflow-x:auto}
+.diagram svg{display:block;width:100%;min-width:420px;height:auto}
+.diagram figcaption{font-size:13.5px;color:var(--muted);margin-top:10px}
+.sv-par{fill:none;stroke:var(--faint);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.sv-new{fill:none;stroke:var(--tone);stroke-width:4;stroke-linecap:round}
+.sv-tone{fill:var(--tone)}
+.sv-primer{fill:var(--c4)}
+.sv-enz{fill:var(--c2)}
+.sv-t{fill:var(--muted);font-family:var(--f-sans);font-size:13px}
+.sv-t.strong{fill:var(--ink);font-weight:500}
+.sv-w{fill:#fff;font-family:var(--f-sans);font-size:11px;font-weight:600}
+
+/* Content widgets */
+.flow{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;padding:22px;border-radius:20px;background:var(--glass-strong);border:1px solid var(--hair)}
+.flow-n{padding:12px 22px;border-radius:16px;font-family:var(--f-serif);font-size:22px;color:#fff;box-shadow:0 10px 22px -12px var(--shadow)}
+.flow-a{display:flex;flex-direction:column;align-items:center;font-size:12px;color:var(--muted);min-width:90px}
+.flow-a i{display:block;width:100%;height:2px;background:var(--hair);position:relative;margin-top:4px}
+.flow-a i::after{content:"";position:absolute;right:-1px;top:-4px;border:5px solid transparent;border-left:7px solid var(--faint);border-right:0}
+.pairs{display:flex;justify-content:center;gap:6px;padding:20px 12px;border-radius:20px;background:var(--glass-strong);border:1px solid var(--hair);overflow-x:auto}
+.pair{display:flex;flex-direction:column;align-items:center;gap:6px}
+.nt-tile{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-family:var(--f-mono);font-weight:500;color:#fff}
+.b-A{--b:var(--c1)} .b-T{--b:var(--c3)} .b-G{--b:var(--c2)} .b-C{--b:var(--c4)} .b-U{--b:var(--c6)}
+.nt-tile{background:var(--b)}
+.hb{display:flex;gap:3px;height:22px}
+.hb i{width:2px;border-radius:2px;background:repeating-linear-gradient(to bottom,var(--faint) 0 3px,transparent 3px 6px)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend i{width:12px;height:12px;border-radius:4px;background:var(--b,var(--tone))}
+.strands{font-family:var(--f-mono);font-size:14.5px;line-height:1.9;padding:16px 20px;border-radius:18px;background:var(--glass-strong);border:1px solid var(--hair);overflow-x:auto;white-space:nowrap}
+.strands .lbl{display:inline-block;width:170px;font-family:var(--f-sans);font-size:13px;color:var(--muted)}
+.strands .hl{color:var(--tone);font-weight:500}
+.genebar{display:flex;flex-direction:column;gap:10px;padding:18px;border-radius:20px;background:var(--glass-strong);border:1px solid var(--hair);overflow-x:auto}
+.gb-row{display:flex;align-items:center;gap:3px;min-width:440px;font-size:12px}
+.gb-row>span:first-child{width:96px;flex:none;color:var(--muted);font-size:12.5px}
+.seg{height:30px;border-radius:7px;display:grid;place-items:center;color:#fff;font-weight:500}
+.seg.ex{background:var(--tone)}
+.seg.in{background:var(--hair);color:var(--muted);font-weight:400}
+.seg.cap{background:var(--c4);width:30px;border-radius:50%}
+.seg.pa{background:var(--c6);padding:0 10px}
+.codon-tbl{overflow-x:auto;border-radius:18px;border:1px solid var(--hair);background:var(--glass-strong)}
+.codon-tbl table{border-collapse:collapse;min-width:560px;width:100%;font-size:13px}
+.codon-tbl th{font-weight:500;color:var(--muted);padding:8px;font-size:12px}
+.codon-tbl td{padding:6px 8px;border:1px solid var(--hair);vertical-align:top}
+.codon-tbl th.fb{font-family:var(--f-serif);font-size:20px;color:var(--tone);width:44px}
+.cd{display:flex;justify-content:space-between;gap:6px;font-family:var(--f-mono);line-height:1.75;padding:0 4px;border-radius:6px}
+.cd b{font-weight:500;font-family:var(--f-sans)}
+.cd.start{background:color-mix(in srgb,var(--good) 18%,transparent)}
+.cd.stop{background:color-mix(in srgb,var(--bad) 16%,transparent)}
+.sim{border-radius:22px;padding:22px;background:var(--glass-strong);border:1px solid var(--hair);display:grid;gap:18px}
+.sim-ctl{display:flex;flex-wrap:wrap;gap:10px}
+.toggle{display:inline-flex;align-items:center;gap:10px;border:1px solid var(--hair);background:var(--glass);border-radius:99px;padding:8px 16px 8px 10px;font-size:14px}
+.operon{overflow-x:auto;padding-top:34px}
+.op-row{display:flex;align-items:flex-end;gap:4px;min-width:520px;position:relative}
+.op{height:40px;border-radius:9px;display:grid;place-items:center;font-size:13px;font-weight:500;position:relative}
+.op.reg{background:var(--hair);color:var(--muted);width:64px;margin-right:22px}
+.op.p{background:color-mix(in srgb,var(--c4) 30%,transparent);width:78px}
+.op.o{background:color-mix(in srgb,var(--c3) 26%,transparent);width:70px}
+.op.g{background:var(--tone);color:#fff;flex:1;font-style:italic}
+.float{position:absolute;bottom:46px;padding:4px 10px;border-radius:99px;font-size:12px;font-weight:500;white-space:nowrap;transition:all .5s cubic-bezier(.2,.8,.2,1)}
+.f-rep{background:var(--c3);color:#fff}
+.f-cap{background:var(--c4);color:#fff}
+.f-pol{background:var(--c2);color:#fff}
+.sim-out{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.sim-out>div{border-radius:16px;padding:12px 14px;background:var(--glass);border:1px solid var(--hair)}
+.sim-out small{display:block;font-size:12px;color:var(--muted)}
+.sim-out b{font-weight:500;font-size:15px}
+.lvl{display:flex;gap:4px;margin-top:6px}
+.lvl i{flex:1;height:5px;border-radius:5px;background:var(--hair)}
+.lvl i.on{background:var(--tone)}
+.sim-text{font-size:15px !important;color:var(--muted)}
+.frame{display:grid;gap:10px}
+.frame>div{display:grid;grid-template-columns:150px minmax(0,1fr);gap:4px 16px;align-items:baseline;padding:12px 16px;border-radius:16px;background:var(--glass-strong);border:1px solid var(--hair)}
+.frame .lbl{font-size:13px;color:var(--muted)}
+.frame code{font-family:var(--f-mono);font-size:17px;letter-spacing:.08em}
+.frame mark{background:color-mix(in srgb,var(--tone) 30%,transparent);color:inherit;border-radius:4px;padding:0 2px}
+.frame small{grid-column:2;font-size:13px;color:var(--muted)}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.step{border-radius:18px;padding:16px;color:#fff;position:relative;overflow:hidden}
+.step b{display:block;font-family:var(--f-serif);font-weight:400;font-size:30px;line-height:1.1}
+.step strong{display:block;font-size:14.5px;margin-top:2px}
+.step span{display:block;font-size:13px;line-height:1.5;opacity:.92;margin-top:6px}
+.step.s1{background:linear-gradient(150deg,var(--c3),var(--c6))}
+.step.s2{background:linear-gradient(150deg,var(--c5),var(--c2))}
+.step.s3{background:linear-gradient(150deg,var(--c4),var(--c3))}
+.pcr{border-radius:22px;padding:22px;background:var(--glass-strong);border:1px solid var(--hair);display:grid;gap:14px}
+.pcr-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px}
+.pcr-top b{font-family:var(--f-serif);font-weight:300;font-size:40px;line-height:1;font-variant-numeric:tabular-nums}
+.pcr input[type=range]{width:100%;accent-color:var(--tone)}
+.pcr small{color:var(--muted);font-size:13px}
+.seqdemo{font-family:var(--f-mono);font-size:15px;padding:16px 20px;border-radius:18px;background:var(--glass-strong);border:1px solid var(--hair);overflow-x:auto;white-space:nowrap;line-height:2}
+.proto{background:color-mix(in srgb,var(--tone) 22%,transparent);border-radius:4px;padding:2px 0}
+.pamhl{background:color-mix(in srgb,var(--c4) 40%,transparent);border-radius:4px;padding:2px 0}
+.scis{color:var(--bad);font-family:var(--f-sans);padding:0 2px}
+
+/* Game */
+.game{border-radius:30px;padding:clamp(24px,4.5vw,44px);scroll-margin-top:20px;position:relative;overflow:hidden;isolation:isolate}
+.game::before{content:"";position:absolute;right:-120px;top:-140px;width:360px;height:360px;border-radius:50%;background:var(--tone);opacity:.14;filter:blur(60px);z-index:-1}
+.game-head{max-width:64ch;display:grid;gap:8px;margin-bottom:24px}
+.game-head .label{color:var(--tone)}
+.game-head h2{font-size:clamp(28px,3vw,36px);font-weight:400}
+.game-head p{color:var(--muted)}
+.game-head .already{font-size:13.5px;color:var(--faint)}
+.game-body{display:grid;gap:18px;outline:none}
+.game-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.score-line{font-size:13.5px;color:var(--muted)}
+.result{display:flex;flex-wrap:wrap;align-items:center;gap:16px;padding:18px 22px;border-radius:20px;border:1px solid var(--hair)}
+.result.ok{background:color-mix(in srgb,var(--good) 12%,var(--glass-strong))}
+.result.no{background:color-mix(in srgb,var(--bad) 9%,var(--glass-strong))}
+.result>div:nth-child(2){flex:1;min-width:200px}
+.result b{font-family:var(--f-serif);font-size:22px;font-weight:400}
+.result p{font-size:14px;color:var(--muted)}
+.result-ico{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:#fff;flex:none}
+.result.ok .result-ico{background:var(--good)}
+.result.no .result-ico{background:var(--bad)}
+.result-ico .ic{font-size:20px;stroke-width:2.4}
+.q{display:grid;gap:12px;padding-bottom:20px;border-bottom:1px solid var(--hair)}
+.q-head{display:flex;gap:12px;align-items:baseline}
+.q-n{width:26px;height:26px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:12.5px;font-weight:500;color:var(--tone);background:color-mix(in srgb,var(--tone) 13%,transparent);transform:translateY(-2px)}
+.q-head p{font-family:var(--f-serif);font-size:20px;line-height:1.4}
+.q-fig{max-width:340px}
+.q-fig svg{width:100%;height:auto;display:block}
+.opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.opt{display:flex;align-items:center;gap:12px;text-align:left;border:1px solid var(--hair);background:var(--glass);border-radius:16px;padding:12px 16px;font-size:14.5px;line-height:1.45;transition:border-color .25s,background .25s,opacity .25s}
+.opt:hover:not(:disabled){border-color:var(--tone);background:var(--glass-strong)}
+.opt .key{font-family:var(--f-serif);font-style:italic;font-size:16px;width:16px;color:var(--faint);flex:none}
+.opt.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 13%,transparent)}
+.opt.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 9%,transparent)}
+.opt.dim{opacity:.5}
+.explain{font-size:14.5px;color:var(--muted);padding-left:38px}
+.explain b{font-weight:500}
+.ok{color:var(--good)} .no{color:var(--bad)}
+.match{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:12px}
+.match-col{display:grid;gap:8px;align-content:start}
+.tile{text-align:left;border:1px solid var(--hair);background:var(--glass);border-radius:14px;padding:11px 14px;font-size:14px;line-height:1.45;transition:all .25s}
+.terms-col .tile{font-family:var(--f-serif);font-size:17px}
+.tile:hover:not(:disabled){border-color:var(--tone)}
+.tile.sel{border-color:var(--tone);background:color-mix(in srgb,var(--tone) 14%,var(--glass-strong));box-shadow:0 0 0 3px color-mix(in srgb,var(--tone) 20%,transparent)}
+.tile.matched{background:color-mix(in srgb,var(--good) 12%,transparent);border-color:color-mix(in srgb,var(--good) 40%,transparent);color:var(--muted)}
+.tile.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,transparent);animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.order{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.order-item{display:flex;align-items:center;gap:14px;border:1px solid var(--hair);background:var(--glass);border-radius:16px;padding:10px 10px 10px 14px}
+.order-n{width:26px;height:26px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:12.5px;font-weight:500;color:var(--tone);background:color-mix(in srgb,var(--tone) 13%,transparent)}
+.order-t{flex:1;font-size:14.5px;line-height:1.45;min-width:0}
+.order-item{position:relative;cursor:grab;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:pan-y;transition:transform .24s cubic-bezier(.2,.8,.2,1),border-color .25s,background .25s,box-shadow .25s}
+.order-item:hover:not(.locked){border-color:color-mix(in srgb,var(--tone) 45%,var(--hair));background:var(--glass-strong)}
+.order-item.dragging{transition:none;z-index:5;cursor:grabbing;background:var(--glass-strong);border-color:var(--tone);box-shadow:0 24px 48px -18px var(--shadow),0 0 0 3px color-mix(in srgb,var(--tone) 18%,transparent)}
+.order-item.landed{border-color:var(--tone)}
+.order-item.locked{cursor:default}
+.dragging-list,.dragging-list *{cursor:grabbing !important}
+.grip{flex:none;width:36px;height:36px;display:grid;place-items:center;color:var(--faint);border-radius:10px;touch-action:none;transition:color .2s,background .2s}
+.grip .ic{font-size:20px}
+.order-item:hover .grip,.order-item.dragging .grip{color:var(--tone);background:color-mix(in srgb,var(--tone) 10%,transparent)}
+.order-item.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 11%,transparent)}
+.order-item.wrong{border-color:color-mix(in srgb,var(--bad) 60%,transparent)}
+.order-ctl{display:flex;gap:4px;flex:none}
+.mini-btn{width:34px;height:34px;border-radius:10px;border:1px solid var(--hair);background:var(--glass-strong);display:grid;place-items:center}
+.mini-btn:disabled{opacity:.3}
+.mini-btn .ic{font-size:16px}
+.cloze{font-size:16.5px;line-height:2.4;max-width:70ch}
+.gap{font:inherit;font-size:14.5px;color:var(--ink);background:var(--glass-strong);border:1px solid var(--tone);border-radius:10px;padding:3px 8px;margin:0 2px;max-width:100%}
+.gap.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--glass-strong))}
+.gap.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--glass-strong))}
+.strand-wrap{overflow-x:auto;padding:6px 2px}
+.strand{display:grid;gap:8px;width:max-content;margin:0 auto}
+.strand-row{display:flex;gap:5px;align-items:center}
+.end{width:26px;font-family:var(--f-mono);font-size:13px;color:var(--muted);text-align:center}
+.base{width:36px;height:40px;border-radius:10px;display:grid;place-items:center;font-family:var(--f-mono);font-weight:500;font-size:16px;color:#fff;background:var(--b);border:0;padding:0}
+.slot{background:var(--glass-strong);border:1.5px dashed var(--faint);color:var(--ink)}
+.slot.filled{background:var(--b);border:0;color:#fff}
+.slot.cur{border:2px solid var(--tone);box-shadow:0 0 0 3px color-mix(in srgb,var(--tone) 22%,transparent)}
+.slot.right{box-shadow:0 0 0 2px var(--good)}
+.slot.wrong{box-shadow:0 0 0 2px var(--bad);animation:shake .4s}
+.keypad{display:flex;justify-content:center;flex-wrap:wrap;gap:8px}
+.key-b{width:56px;height:52px;border-radius:14px;border:0;font-family:var(--f-mono);font-size:19px;font-weight:500;color:#fff;background:var(--b,var(--faint));box-shadow:0 8px 18px -10px var(--b,var(--shadow));transition:transform .15s}
+.key-b:active{transform:scale(.94)}
+.key-b.back{display:grid;place-items:center;background:var(--glass-strong);color:var(--muted);border:1px solid var(--hair);box-shadow:0 8px 18px -12px var(--shadow)}
+.key-b.back:hover{color:var(--ink);border-color:var(--tone)}
+.key-b.back .ic{font-size:24px;stroke-width:1.7}
+.sort{display:grid;gap:10px}
+.sort-item{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;padding:14px 16px;border-radius:16px;border:1px solid var(--hair);background:var(--glass)}
+.sort-item p{font-size:14.5px;line-height:1.5}
+.sort-item.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 10%,transparent)}
+.sort-item.wrong{border-color:var(--bad)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip-b{border:1px solid var(--hair);background:var(--glass-strong);border-radius:99px;padding:6px 13px;font-size:13px;transition:all .2s}
+.chip-b:hover:not(:disabled){border-color:var(--tone)}
+.chip-b.on{background:var(--tone);border-color:var(--tone);color:#fff}
+.codons{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.codon{display:grid;gap:8px;padding:14px;border-radius:16px;border:1px solid var(--hair);background:var(--glass)}
+.codon .cseq{font-family:var(--f-mono);font-size:22px;font-weight:500;letter-spacing:.12em;display:flex;gap:2px}
+.codon .cseq span{color:var(--b)}
+.codon select{font:inherit;font-size:13.5px;color:var(--ink);background:var(--glass-strong);border:1px solid var(--hair);border-radius:10px;padding:6px 8px;width:100%}
+.codon.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 10%,transparent)}
+.codon.wrong{border-color:var(--bad)}
+.codon small{font-size:12px;color:var(--faint)}
+details.hint{font-size:14px;color:var(--muted)}
+details.hint summary{cursor:pointer;color:var(--tone);font-weight:450;width:max-content}
+details.hint>*:not(summary){margin-top:10px}
+.round-head{display:grid;gap:4px}
+.round-head p{font-family:var(--f-serif);font-size:20px;line-height:1.4}
+.seq-scroll{overflow-x:auto;padding:8px 2px}
+.seq{display:flex;align-items:center;width:max-content;margin:0 auto;font-family:var(--f-mono);font-size:17px;font-weight:500}
+.seq .end{width:28px}
+.nt{width:19px;text-align:center;padding:8px 0;border-radius:6px}
+.nt.proto{background:color-mix(in srgb,var(--tone) 22%,transparent);border-radius:0}
+.nt.pam{background:color-mix(in srgb,var(--c4) 42%,transparent);border-radius:0}
+.gap-b{width:10px;height:42px;border:0;background:none;padding:0;position:relative}
+.gap-b::after{content:"";position:absolute;left:4px;top:6px;bottom:6px;width:2px;border-radius:2px;background:transparent;transition:background .2s}
+.gap-b:hover::after,.gap-b:focus-visible::after{background:var(--tone)}
+.gap-b.wrong::after{background:var(--bad)}
+.game-body>*,.sim>*,.pcr>*,.sort>*,.mod-page>*,.prose>*,.sec>*{min-width:0}
+.cutmark{width:10px;display:grid;place-items:center;color:var(--bad);position:relative;height:42px}
+.cutmark::after{content:"";position:absolute;left:5px;top:2px;bottom:2px;width:2px;background:var(--bad)}
+.cutmark .ic{position:absolute;top:-14px;font-size:16px;background:var(--glass-strong);border-radius:50%}
+.passbar{border-radius:26px;padding:22px 26px;display:flex;flex-wrap:wrap;align-items:center;gap:18px;background:linear-gradient(115deg,color-mix(in srgb,var(--good) 16%,var(--glass)),color-mix(in srgb,var(--tone) 16%,var(--glass)));animation:pop .6s cubic-bezier(.2,.8,.2,1)}
+@keyframes pop{from{transform:scale(.97)}to{transform:none}}
+.passbar>div:nth-child(2){flex:1;min-width:220px}
+.passbar b{font-family:var(--f-serif);font-weight:400;font-size:24px}
+.passbar p{font-size:14.5px;color:var(--muted)}
+.pager{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.pg{border-radius:22px;padding:18px 22px;border:1px solid var(--hair);background:var(--glass);text-align:left;display:flex;flex-direction:column;gap:2px;transition:background .3s}
+.pg:hover:not(:disabled){background:var(--glass-strong)}
+.pg.next{text-align:right;grid-column:2;align-items:flex-end}
+.pg small{font-size:12px;color:var(--faint);display:inline-flex;align-items:center;gap:6px}
+.pg b{font-family:var(--f-serif);font-weight:400;font-size:19px;line-height:1.3}
+.pg:disabled{opacity:.55}
+.lockpage{border-radius:30px;padding:clamp(30px,6vw,64px);display:grid;justify-items:center;text-align:center;gap:14px}
+.lockpage .badge{width:64px;height:64px}
+.lockpage .badge .ic{font-size:26px}
+.lockpage h1{font-size:clamp(30px,4vw,44px)}
+.lockpage p{color:var(--muted);max-width:50ch}
+.lockpage ul{list-style:none;padding:0;margin:8px 0;display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.lockpage li{font-size:13.5px;padding:6px 14px;border-radius:99px;background:var(--hair);color:var(--muted)}
+.gel-bg{fill:color-mix(in srgb,var(--c5) 8%,var(--glass-strong));stroke:var(--hair)}
+.gel-well{fill:var(--hair)}
+.gel-band{fill:var(--tone)}
+.gel-mk{fill:var(--muted);opacity:.7}
+.gel-t{fill:var(--muted);font-family:var(--f-sans);font-size:11px}
+.gel-t.s{font-weight:600;font-size:12px;fill:var(--ink)}
+
+/* Celebration */
+.celebrate{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:16px;background:color-mix(in srgb,var(--bg) 50%,transparent);backdrop-filter:blur(12px) saturate(140%);-webkit-backdrop-filter:blur(12px) saturate(140%);animation:celIn .45s ease both}
+.celebrate.out{animation:celOut .35s ease forwards}
+.celebrate canvas{position:fixed;inset:0;pointer-events:none;z-index:2}
+.cel-card{position:relative;width:min(440px,100%);border-radius:32px;padding:40px 30px 28px;text-align:center;display:grid;justify-items:center;gap:10px;background:var(--glass-strong);box-shadow:inset 0 1px 0 var(--highlight),0 50px 100px -40px var(--shadow);animation:cardIn .7s cubic-bezier(.2,.9,.25,1) .1s both}
+.medal{width:96px;height:96px;border-radius:50%;background:radial-gradient(circle at 32% 26%,rgba(255,255,255,.55),transparent 46%),var(--grad);box-shadow:0 20px 44px -14px var(--glow-b);display:grid;place-items:center;margin-bottom:10px;position:relative;animation:medalIn .8s cubic-bezier(.34,1.56,.64,1) .62s both}
+.medal::after{content:"";position:absolute;inset:-10px;border-radius:50%;border:1.5px solid color-mix(in srgb,var(--c2) 45%,transparent);opacity:0;animation:halo 2.6s ease-out 1s infinite}
+.medal svg{width:64px;height:64px}
+.medal-ring{fill:none;stroke:rgba(255,255,255,.5);stroke-width:1.2;stroke-dasharray:183;stroke-dashoffset:183;animation:draw 1s ease .8s forwards}
+.medal-check{fill:none;stroke:#fff;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:44;stroke-dashoffset:44;animation:draw .55s cubic-bezier(.65,0,.35,1) 1s forwards}
+.cel-card .label{color:var(--tone);animation:rise .5s ease .9s both}
+.cel-card h2{font-size:clamp(28px,6vw,36px);font-weight:400;animation:rise .6s cubic-bezier(.2,.9,.25,1) 1s both}
+.cel-score{display:flex;align-items:baseline;gap:3px;font-family:var(--f-serif);color:var(--muted);animation:rise .5s ease 1.1s both}
+.cel-score b{font-size:46px;font-weight:300;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
+.cel-score span{font-size:20px}
+.cel-sub{font-size:13.5px;color:var(--muted);animation:rise .5s ease 1.15s both}
+.unlock{display:flex;align-items:center;gap:14px;text-align:left;margin-top:8px;padding:12px 18px 12px 12px;border-radius:20px;background:color-mix(in srgb,var(--tone) 10%,var(--glass));border:1px solid color-mix(in srgb,var(--tone) 25%,transparent);animation:rise .6s cubic-bezier(.2,.9,.25,1) 1.4s both}
+.unlock .badge{width:44px;height:44px;position:relative;font-size:16px}
+.u-badge{animation:unlockBadge .5s ease 2.05s both}
+.u-lock{position:absolute;inset:0;display:grid;place-items:center;animation:lockAway .45s ease 1.85s forwards}
+.u-lock .ic{font-size:18px}
+.u-num{opacity:0;font-weight:600;animation:numIn .55s cubic-bezier(.34,1.56,.64,1) 2.1s forwards}
+.unlock small{display:block;font-size:12px;color:var(--tone);font-weight:500;letter-spacing:.04em}
+.unlock b{font-family:var(--f-serif);font-weight:400;font-size:18px;line-height:1.3}
+.cel-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:16px;animation:rise .5s ease 1.7s both}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes celIn{from{opacity:0}}
+@keyframes celOut{to{opacity:0}}
+@keyframes cardIn{from{opacity:0;transform:translateY(18px) scale(.94)}}
+@keyframes medalIn{from{opacity:0;transform:scale(.3) rotate(-40deg)}}
+@keyframes halo{0%{transform:scale(.92);opacity:.9}100%{transform:scale(1.7);opacity:0}}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}}
+@keyframes lockAway{to{opacity:0;transform:translateY(-12px) scale(.7)}}
+@keyframes unlockBadge{from{background:var(--hair);border-color:var(--hair);color:var(--faint)}to{background:var(--tone);border-color:var(--tone);color:#fff;box-shadow:0 6px 16px -6px var(--tone)}}
+@keyframes numIn{from{opacity:0;transform:scale(.3)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.celebrate,.celebrate *,.celebrate *::after{animation-duration:.01s !important;animation-delay:0s !important;animation-iteration-count:1 !important}}
+
+.view{animation:enter .6s cubic-bezier(.2,.8,.2,1)}
+@keyframes enter{from{transform:translateY(10px)}to{transform:none}}
+.scrim{display:none}
+
+@media (max-width:1180px){.hero{grid-template-columns:minmax(0,1fr)}.ring-wrap{width:190px;justify-self:start}}
+@media (max-width:900px){
+  .shell{grid-template-columns:minmax(0,1fr);padding-inline:16px;padding-block:12px}
+  .sidebar{position:fixed;left:12px;top:calc(12px + env(safe-area-inset-top,0px));bottom:12px;height:auto;width:min(310px,calc(100vw - 24px));z-index:20;transform:translateX(-110%);transition:transform .4s cubic-bezier(.2,.8,.2,1);background:var(--glass-strong)}
+  body.menu .sidebar{transform:none}
+  body.menu .scrim{display:block;position:fixed;inset:0;z-index:15;background:rgba(10,8,20,.22);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+  .topbar{display:flex}
+  .goals{grid-template-columns:minmax(0,1fr)}
+  .sec,.game{scroll-margin-top:84px}
+}
+@media (max-width:700px){
+  .facts{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .steps,.sim-out{grid-template-columns:minmax(0,1fr)}
+  .opts{grid-template-columns:minmax(0,1fr)}
+  .match{grid-template-columns:minmax(0,1fr)}
+  .stats{grid-template-columns:minmax(0,1fr)}
+  .stat+.stat{border-left:0;border-top:1px solid var(--hair)}
+  .path-row{grid-template-columns:40px minmax(0,1fr);gap:10px}
+  .node .badge{width:34px;height:34px}
+  .path-card{grid-template-columns:minmax(0,1fr);gap:10px}
+  .pc-side{flex-direction:row;align-items:center;justify-content:flex-start;flex-wrap:wrap}
+  .terms>div,.frame>div{grid-template-columns:minmax(0,1fr);gap:2px}
+  .frame small{grid-column:1}
+  .pager{grid-template-columns:minmax(0,1fr)}.pg.next{grid-column:1}
+  .explain{padding-left:0}
+  .strands .lbl{display:block;width:auto}
+}
+@media (prefers-reduced-motion:reduce){.glow,.view,.hero::before,h1 em,h2 em,.passbar,.tile.wrong,.slot.wrong{animation:none}.btn,.sidebar,.path-card{transition:none}}
+</style>
+
+<div class="ambient" aria-hidden="true"><div class="glow a"></div><div class="glow b"></div><div class="glow c"></div><div class="glow d"></div></div>
+<div class="scrim" id="scrim"></div>
+
+<div class="shell">
+  <aside class="sidebar glass" aria-label="Learning path">
+    <button class="brand" data-go="home"><span class="brand-mark"></span><span><b>Molecular Biology</b><small>Learning platform · iGEM 2026</small></span></button>
+    <nav class="side-nav" id="nav"></nav>
+    <div class="side-prog"><div class="sp-top"><span id="spText"></span><span id="spPct"></span></div><div class="track"><i id="spBar"></i></div></div>
+    <div class="side-tools">
+      <button class="tool" id="unlockBtn" aria-pressed="false"><span class="sw"></span>Preview: unlock all modules</button>
+      <div id="resetWrap"></div>
+    </div>
+    <div class="side-foot">
+      <a href="#" id="wikiLink">← Back to the wiki</a>
+      <button class="round" id="themeBtn" aria-label="Switch between light and dark mode"></button>
+    </div>
+  </aside>
+
+  <main>
+    <div class="topbar glass">
+      <button class="round" id="menuBtn" aria-label="Open learning path"></button>
+      <b id="topTitle">Overview</b>
+      <span id="topProg"></span>
+    </div>
+    <div id="view"></div>
+    <footer>
+      <span>iGEM 2026 · Team Vienna · BOKU University, TU Wien &amp; University of Vienna</span>
+      <span>Introductory course in molecular biology · 13 modules</span>
+    </footer>
+  </main>
+</div>
+
+<script>
+/* ---------- Icons ---------- */
+const ic=(d,extra="")=>`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" ${extra}>${d}</svg>`;
+const ICON={
+  check:ic('<path d="M5 12.5l4.5 4.5L19 7.5"/>'),
+  lock:ic('<rect x="5" y="11" width="14" height="9" rx="2.5"/><path d="M8.5 11V8a3.5 3.5 0 0 1 7 0v3"/>'),
+  arrow:ic('<path d="M5 12h14M13 6l6 6-6 6"/>'),
+  back:ic('<path d="M19 12H5M11 6l-6 6 6 6"/>'),
+  up:ic('<path d="M6 15l6-6 6 6"/>'),
+  down:ic('<path d="M6 9l6 6 6-6"/>'),
+  home:ic('<path d="M4 11 12 5l8 6v8H4z"/>'),
+  moon:ic('<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>'),
+  menu:ic('<path d="M4 8h16M4 16h16"/>'),
+  clock:ic('<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>'),
+  game:ic('<path d="M12 3l2.4 5.4L20 9.2l-4.2 3.9 1.1 5.8L12 16l-4.9 2.9 1.1-5.8L4 9.2l5.6-.8z"/>'),
+  scissors:ic('<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.6 7.6 20 18M8.6 16.4 20 6"/>'),
+  redo:ic('<path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4.5h4.5"/>'),
+  grip:ic('<circle cx="9" cy="6" r=".8"/><circle cx="15" cy="6" r=".8"/><circle cx="9" cy="12" r=".8"/><circle cx="15" cy="12" r=".8"/><circle cx="9" cy="18" r=".8"/><circle cx="15" cy="18" r=".8"/>','style="stroke-width:2.4"'),
+  del:ic('<path d="M9 5h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-6-7z"/><path d="M12.5 9.5l5 5M17.5 9.5l-5 5"/>'),
+  trophy:ic('<path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8.5 20h7"/>')
+};
+
+/* ---------- Helpers for content ---------- */
+const BASES="UCAG";
+const AA1="FFLLSSSSYY**CC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG";
+const AAN={F:["Phe","Phenylalanine"],L:["Leu","Leucine"],S:["Ser","Serine"],Y:["Tyr","Tyrosine"],"*":["Stop","Stop codon"],C:["Cys","Cysteine"],W:["Trp","Tryptophan"],P:["Pro","Proline"],H:["His","Histidine"],Q:["Gln","Glutamine"],R:["Arg","Arginine"],I:["Ile","Isoleucine"],M:["Met","Methionine"],T:["Thr","Threonine"],N:["Asn","Asparagine"],K:["Lys","Lysine"],V:["Val","Valine"],A:["Ala","Alanine"],D:["Asp","Aspartic acid"],E:["Glu","Glutamic acid"],G:["Gly","Glycine"]};
+const code=c=>AA1[BASES.indexOf(c[0])*16+BASES.indexOf(c[1])*4+BASES.indexOf(c[2])];
+
+function gelSVG(lanes){
+  const W=90+lanes.length*62, H=250, top=40, bot=H-22, lo=Math.log10(150), hi=Math.log10(4000);
+  const y=s=>top+(hi-Math.log10(s))/(hi-lo)*(bot-top);
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Agarose gel with a size marker and samples"><rect class="gel-bg" x="70" y="18" width="${W-82}" height="${H-30}" rx="12"/>`;
+  s+=`<text class="gel-t s" x="58" y="34" text-anchor="end">−</text><text class="gel-t s" x="58" y="${H-14}" text-anchor="end">+</text>`;
+  lanes.forEach((ln,i)=>{const x=84+i*62;
+    s+=`<text class="gel-t s" x="${x+20}" y="13" text-anchor="middle">${ln.name}</text><rect class="gel-well" x="${x}" y="24" width="40" height="7" rx="2"/>`;
+    ln.bands.forEach(b=>{s+=`<rect class="${ln.marker?"gel-mk":"gel-band"}" x="${x}" y="${y(b)-2.5}" width="40" height="5" rx="2.5"/>`;
+      if(ln.marker)s+=`<text class="gel-t" x="62" y="${y(b)+4}" text-anchor="end">${b.toLocaleString("en-US")}</text>`});
+  });
+  return s+`<text class="gel-t" x="62" y="${top-12}" text-anchor="end">bp</text></svg>`;
+}
+const GEL=[{name:"M",marker:true,bands:[3000,2000,1500,1000,750,500,250]},{name:"A",bands:[1000]},{name:"B",bands:[2000,500]},{name:"C",bands:[250]}];
+
+/* =====================================================================
+   COURSE CONTENT — 13 modules. Edit text, learning goals and mini-games here.
+   ===================================================================== */
+const MODULES=[
+{ id:"cell", title:"The Cell & Its Genome", minutes:12,
+  short:"Where genetic information is stored, how it is organised and in which direction it flows.",
+  goals:["Distinguish prokaryotes from eukaryotes","Explain genome, chromosome, gene and allele","Describe the central dogma"],
+  sections:[
+  {h:"Life is made of cells",html:`
+    <p>All living things are made of cells – from bacteria, which consist of a single cell, to humans with around 30 trillion. Every cell carries a complete set of instructions: its <strong>genetic material</strong>, the DNA.</p>
+    <p>Depending on where the DNA is located, we distinguish two large groups:</p>
+    <ul>
+      <li><strong>Prokaryotes</strong> (bacteria and archaea) have no nucleus. Their DNA lies freely in the cytoplasm, usually as a single circular chromosome. Many also carry small DNA rings called <strong>plasmids</strong>.</li>
+      <li><strong>Eukaryotes</strong> (animals, plants, fungi) keep their DNA in the <strong>nucleus</strong>, spread across several linear chromosomes. Mitochondria and chloroplasts also have their own small DNA.</li>
+    </ul>`},
+  {h:"From genome to gene",html:`
+    <dl class="terms">
+      <div><dt>Genome</dt><dd>The complete genetic information of an organism.</dd></div>
+      <div><dt>Chromosome</dt><dd>A single, very long DNA molecule. In eukaryotes it is wrapped around proteins called <strong>histones</strong>. DNA and proteins together are called <strong>chromatin</strong>.</dd></div>
+      <div><dt>Gene</dt><dd>A stretch of DNA that carries the information for a product – usually a protein, sometimes a functional RNA.</dd></div>
+      <div><dt>Allele</dt><dd>A variant of a gene, for example the variants for blood groups A, B and O.</dd></div>
+    </dl>
+    <div class="facts">
+      <div class="fact"><b>3.1 billion</b><span>base pairs in the human genome</span></div>
+      <div class="fact"><b>≈ 20,000</b><span>human genes code for proteins</span></div>
+      <div class="fact"><b>1–2%</b><span>of human DNA actually codes for proteins</span></div>
+      <div class="fact"><b>≈ 2 m</b><span>of DNA, stretched out, in every body cell</span></div>
+    </div>`},
+  {h:"The central dogma",html:`
+    <p>In the cell, information flows in a fixed direction:</p>
+    <div class="flow" role="img" aria-label="DNA is transcribed into RNA, RNA is translated into protein">
+      <span class="flow-n" style="background:var(--c2)">DNA</span>
+      <span class="flow-a">Transcription<i></i></span>
+      <span class="flow-n" style="background:var(--c6)">RNA</span>
+      <span class="flow-a">Translation<i></i></span>
+      <span class="flow-n" style="background:var(--c1)">Protein</span>
+    </div>
+    <ul>
+      <li><strong>Replication:</strong> Before every cell division, the DNA is copied (module 4).</li>
+      <li><strong>Transcription:</strong> A gene is rewritten into RNA (module 5).</li>
+      <li><strong>Translation:</strong> The RNA is translated into a protein at the ribosome (module 6).</li>
+    </ul>
+    <p>Retroviruses such as HIV are an exception: with the enzyme <strong>reverse transcriptase</strong> they write RNA back into DNA.</p>`}
+  ],
+  merke:"DNA is the archive, RNA the working copy and the protein the tool.",
+  game:{type:"match",title:"Match the terms",intro:"First tap a term, then tap the matching definition.",pairs:[
+    ["Genome","The complete genetic information of an organism"],
+    ["Gene","Stretch of DNA carrying the information for a protein or a functional RNA"],
+    ["Chromosome","A single, long and tightly packed DNA molecule"],
+    ["Allele","A variant of the same gene"],
+    ["Plasmid","Small circular DNA ring, typical of bacteria"],
+    ["Histones","Proteins around which DNA is wound in the nucleus"],
+    ["Transcription","Rewriting a gene from DNA into RNA"]]}
+},
+{ id:"dna", title:"DNA Structure", minutes:14,
+  short:"Nucleotides, base pairing and the double helix – the foundation of molecular biology.",
+  goals:["Name the three parts of a nucleotide","Apply complementary base pairing","Explain the 5′ and 3′ ends"],
+  sections:[
+  {h:"The nucleotide",html:`
+    <p>DNA (deoxyribonucleic acid) is a chain of millions of building blocks called <strong>nucleotides</strong>. Each nucleotide has three parts:</p>
+    <ul>
+      <li>a <strong>phosphate group</strong>,</li>
+      <li>the sugar <strong>deoxyribose</strong>,</li>
+      <li>one of four <strong>bases</strong>: adenine (A), thymine (T), guanine (G) or cytosine (C).</li>
+    </ul>
+    <p>A and G are <strong>purines</strong> with two rings; C and T are <strong>pyrimidines</strong> with one ring. In every base pair a purine faces a pyrimidine – which is why the helix has the same width everywhere.</p>`},
+  {h:"The double helix",html:`
+    <p>In 1953, James Watson and Francis Crick described the structure of DNA. The X-ray diffraction images taken by <strong>Rosalind Franklin</strong> were crucial to their discovery.</p>
+    <div data-widget="pairs"></div>
+    <ul>
+      <li>The <strong>backbone</strong> of sugar and phosphate is on the outside; the bases point inwards.</li>
+      <li><strong>Complementary base pairing:</strong> A pairs with T via 2 hydrogen bonds, G pairs with C via 3.</li>
+      <li>The helix is right-handed. One turn spans about 10.5 base pairs and is 3.4 nm high; the diameter is 2 nm.</li>
+    </ul>`},
+  {h:"Why direction matters",html:`
+    <p>The carbon atoms of deoxyribose are numbered 1′ to 5′. This gives each strand two different ends:</p>
+    <ul>
+      <li>At the <strong>5′ end</strong>, a free phosphate group sits on the 5′ carbon.</li>
+      <li>At the <strong>3′ end</strong>, a free OH group sits on the 3′ carbon.</li>
+    </ul>
+    <p>The two strands run <strong>antiparallel</strong>: one runs from 5′ to 3′, the complementary strand from 3′ to 5′. Sequences are always written in the 5′→3′ direction, and enzymes only extend DNA at its 3′ end.</p>
+    <div class="strands"><span class="lbl">Strand</span>5′-A T G C G T A C-3′<br><span class="lbl">Complementary strand</span>3′-<span class="hl">T A C G C A T G</span>-5′</div>`},
+  {h:"Chargaff’s rules",html:`
+    <p>Because A always pairs with T and G always pairs with C, double-stranded DNA follows the rule <strong>A = T</strong> and <strong>G = C</strong>.</p>
+    <p>Example: if a DNA contains 30% adenine, it also contains 30% thymine. That leaves 40% for G and C together – 20% each.</p>
+    <p>GC-rich DNA is more stable because G–C pairs have three hydrogen bonds instead of two. It only separates at higher temperatures – which matters for PCR (module 10).</p>`}
+  ],
+  merke:"A pairs with T, G pairs with C – and the two strands always run in opposite directions.",
+  game:{type:"complement",title:"Build the complementary strand",intro:"Complete the complementary strand. Tap the bases or use your keyboard (A, T, G, C).",strand:"ATGCGTTAGC"}
+},
+{ id:"rna", title:"RNA – The Versatile Copy", minutes:10,
+  short:"How RNA differs from DNA and what its most important types do.",
+  goals:["Name three differences between DNA and RNA","Distinguish mRNA, tRNA and rRNA","Place RNA in medicine and technology"],
+  sections:[
+  {h:"Three differences from DNA",html:`
+    <div class="tbl"><table>
+      <thead><tr><th></th><th>DNA</th><th>RNA</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Sugar</strong></td><td>Deoxyribose</td><td>Ribose (extra OH group on the 2′ carbon)</td></tr>
+        <tr><td><strong>Bases</strong></td><td>A, T, G, C</td><td>A, <strong>U</strong>, G, C – uracil replaces thymine and pairs with A</td></tr>
+        <tr><td><strong>Structure</strong></td><td>Double strand, double helix</td><td>Mostly single-stranded; folds into hairpins and 3D shapes</td></tr>
+        <tr><td><strong>Stability</strong></td><td>Very stable, long-term storage</td><td>Short-lived, broken down quickly</td></tr>
+      </tbody>
+    </table></div>
+    <p>Precisely because RNA is short-lived, it works well as a working copy: the cell can react quickly when it no longer needs a protein.</p>`},
+  {h:"The most important types of RNA",html:`
+    <dl class="terms">
+      <div><dt>mRNA</dt><dd><strong>Messenger RNA:</strong> the copy of a gene. It carries the instructions from the nucleus to the ribosome.</dd></div>
+      <div><dt>tRNA</dt><dd><strong>Transfer RNA:</strong> a cloverleaf-shaped molecule that carries an amino acid. With its <strong>anticodon</strong> it recognises the matching codon on the mRNA.</dd></div>
+      <div><dt>rRNA</dt><dd><strong>Ribosomal RNA:</strong> the main component of the ribosome. It forms the peptide bonds between amino acids – an RNA that works as an enzyme (a ribozyme).</dd></div>
+      <div><dt>miRNA</dt><dd><strong>MicroRNA:</strong> short regulatory RNAs that bind to mRNAs and slow down their translation.</dd></div>
+    </dl>`},
+  {h:"RNA as a tool",html:`
+    <ul>
+      <li><strong>mRNA vaccines</strong> deliver the blueprint for a viral protein. Body cells produce it briefly, and the immune system learns to recognise it.</li>
+      <li>In <strong>CRISPR/Cas9</strong>, a guide RNA leads the gene scissors to their target (module 12).</li>
+      <li>The <strong>RNA world hypothesis</strong> suggests that early life was based on RNA, because RNA can both store information and speed up reactions.</li>
+    </ul>`}
+  ],
+  merke:"RNA = ribose + uracil + mostly single-stranded. mRNA carries the information, tRNA brings the amino acids, rRNA builds the protein.",
+  game:{type:"mc",title:"RNA quiz",intro:"Five questions about RNA. You’ll see an explanation right after each answer.",q:[
+    {t:"Which base occurs in RNA instead of thymine?",o:["Uracil","Cytosine","Inosine","Adenine"],a:0,e:"Like thymine, uracil pairs with adenine, but it lacks a methyl group."},
+    {t:"Which sugar is part of RNA?",o:["Deoxyribose","Ribose","Glucose","Fructose"],a:1,e:"Ribose has an OH group on its 2′ carbon that deoxyribose lacks."},
+    {t:"Which RNA brings amino acids to the ribosome?",o:["mRNA","rRNA","tRNA","miRNA"],a:2,e:"tRNA carries the amino acid at one end and the anticodon at the other."},
+    {t:"Which RNA strand is complementary to 5′-AUGC-3′?",o:["3′-TACG-5′","3′-UACG-5′","3′-AUGC-5′","3′-GCAU-5′"],a:1,e:"A pairs with U, G with C – and the complementary strand runs antiparallel. RNA contains no T."},
+    {t:"Which statement about rRNA is correct?",o:["It carries the anticodon","It is the copy of a gene","It forms the peptide bond in the ribosome","It only occurs in viruses"],a:2,e:"rRNA forms the catalytic centre of the ribosome, which makes it a ribozyme."}]}
+},
+{ id:"replication", title:"DNA Replication", minutes:15,
+  short:"How a cell copies its DNA quickly and almost without errors before every division.",
+  goals:["Explain the semi-conservative principle","Describe the jobs of the replication enzymes","Distinguish the leading and lagging strand"],
+  sections:[
+  {h:"Copying semi-conservatively",html:`
+    <p>During replication, each of the two strands serves as a template for a new one. Every daughter DNA therefore consists of <strong>one old and one new strand</strong> – this is called <strong>semi-conservative</strong> replication.</p>
+    <p>Matthew Meselson and Franklin Stahl proved this in 1958. They first grew bacteria with heavy nitrogen (¹⁵N) and then with light nitrogen (¹⁴N). After one generation, every DNA molecule had exactly intermediate density.</p>`},
+  {h:"The enzyme crew",html:`
+    <dl class="terms">
+      <div><dt>Helicase</dt><dd>Unwinds the double helix and separates the strands, creating the <strong>replication fork</strong>.</dd></div>
+      <div><dt>Topoisomerase</dt><dd>Relieves the twisting tension ahead of the fork (in bacteria: gyrase).</dd></div>
+      <div><dt>SSB proteins</dt><dd>Single-strand binding proteins keep the separated strands open.</dd></div>
+      <div><dt>Primase</dt><dd>Lays down a short <strong>RNA primer</strong>. The polymerase needs a free 3′-OH as its starting point.</dd></div>
+      <div><dt>DNA polymerase III</dt><dd>Extends the primer in the 5′→3′ direction and corrects its own mistakes (proofreading).</dd></div>
+      <div><dt>DNA polymerase I</dt><dd>Removes the RNA primers and replaces them with DNA.</dd></div>
+      <div><dt>Ligase</dt><dd>Seals the remaining gaps in the backbone.</dd></div>
+    </dl>
+    <p>The names polymerase I and III apply to bacteria. Eukaryotes use other polymerases that work on the same principle.</p>`},
+  {h:"Leading and lagging strand",html:`
+    <p>DNA polymerase can only build in the 5′→3′ direction. Because the strands are antiparallel, two different strands form at every fork:</p>
+    <figure class="diagram">
+      <svg viewBox="0 0 520 200" role="img" aria-label="Replication fork: the leading strand grows continuously towards the fork, the lagging strand grows away from it in short fragments">
+        <path class="sv-par" d="M20 92 H190 L232 52 H505"/>
+        <path class="sv-par" d="M20 108 H190 L232 148 H505"/>
+        <path class="sv-new" d="M500 64 H264"/><polygon class="sv-tone" points="250,64 265,57 265,71"/>
+        <rect class="sv-primer" x="486" y="60" width="14" height="8" rx="2"/>
+        <path class="sv-new" d="M270 136 H318"/><polygon class="sv-tone" points="332,136 317,129 317,143"/>
+        <path class="sv-new" d="M360 136 H408"/><polygon class="sv-tone" points="422,136 407,129 407,143"/>
+        <path class="sv-new" d="M450 136 H490"/><polygon class="sv-tone" points="504,136 489,129 489,143"/>
+        <rect class="sv-primer" x="258" y="132" width="12" height="8" rx="2"/>
+        <rect class="sv-primer" x="348" y="132" width="12" height="8" rx="2"/>
+        <rect class="sv-primer" x="438" y="132" width="12" height="8" rx="2"/>
+        <circle class="sv-enz" cx="204" cy="100" r="14"/><text class="sv-w" x="204" y="104" text-anchor="middle">H</text>
+        <text class="sv-t strong" x="262" y="92">Leading strand: continuous</text>
+        <text class="sv-t strong" x="262" y="118">Lagging strand: Okazaki fragments</text>
+        <text class="sv-t" x="20" y="74">← fork moves</text>
+        <text class="sv-t" x="150" y="138" text-anchor="end">Helicase (H)</text>
+        <rect class="sv-primer" x="20" y="178" width="14" height="8" rx="2"/><text class="sv-t" x="40" y="186">RNA primer</text>
+        <path class="sv-new" d="M140 182 H166"/><text class="sv-t" x="174" y="186">new DNA</text>
+        <path class="sv-par" d="M262 182 H288"/><text class="sv-t" x="296" y="186">parental strand</text>
+      </svg>
+      <figcaption>The leading strand grows towards the fork, the lagging strand grows away from it in short pieces.</figcaption>
+    </figure>
+    <ul>
+      <li>The <strong>leading strand</strong> is synthesised continuously towards the fork and needs only one primer.</li>
+      <li>The <strong>lagging strand</strong> is made piece by piece, away from the fork, as <strong>Okazaki fragments</strong>. In bacteria they are 1,000–2,000 nucleotides long, in eukaryotes 100–200.</li>
+    </ul>`},
+  {h:"Fast and precise",html:`
+    <div class="facts">
+      <div class="fact"><b>≈ 1,000</b><span>nucleotides per second added by E. coli at each fork</span></div>
+      <div class="fact"><b>≈ 50</b><span>nucleotides per second in humans</span></div>
+      <div class="fact"><b>1 : 10⁷</b><span>error rate after proofreading</span></div>
+      <div class="fact"><b>1 : 10⁹</b><span>error rate after additional mismatch repair</span></div>
+    </div>
+    <p>Human chromosomes are huge. That is why replication starts at thousands of <strong>origins of replication</strong> at the same time – otherwise it would take weeks.</p>`}
+  ],
+  merke:"Helicase opens, primase starts, polymerase builds (only 5′→3′), ligase joins. The lagging strand is made in Okazaki fragments.",
+  game:{type:"order",title:"Steps of replication",intro:"Put the steps in the correct order. Hold a step and drag it up or down, then check.",items:[
+    "Helicase unwinds the double helix at the origin of replication.",
+    "Single-strand binding proteins stabilise the separated strands.",
+    "Primase lays down a short RNA primer.",
+    "DNA polymerase III extends the primer in the 5′→3′ direction.",
+    "DNA polymerase I replaces the RNA primers with DNA.",
+    "Ligase joins the Okazaki fragments into one continuous strand."]}
+},
+{ id:"transcription", title:"Transcription", minutes:14,
+  short:"How a gene is rewritten into RNA and, in eukaryotes, trimmed into shape afterwards.",
+  goals:["Distinguish the template and coding strand","Describe the three phases of transcription","Explain the cap, poly(A) tail and splicing"],
+  sections:[
+  {h:"From gene to RNA",html:`
+    <p>During transcription, <strong>RNA polymerase</strong> rewrites a gene into RNA. Only one of the two DNA strands serves as the template:</p>
+    <ul>
+      <li>The <strong>template strand</strong> (antisense strand) is read.</li>
+      <li>The <strong>coding strand</strong> (sense strand) has the same sequence as the resulting mRNA – just with T instead of U.</li>
+    </ul>
+    <div class="strands">
+      <span class="lbl">Coding strand</span>5′-ATG GCC TTA-3′<br>
+      <span class="lbl">Template strand</span>3′-TAC CGG AAT-5′<br>
+      <span class="lbl">mRNA</span><span class="hl">5′-AUG GCC UUA-3′</span>
+    </div>`},
+  {h:"Three phases",html:`
+    <ol>
+      <li><strong>Initiation:</strong> RNA polymerase binds to the <strong>promoter</strong> in front of the gene. In bacteria, a sigma factor helps it recognise sequences such as the Pribnow box TATAAT. In eukaryotes, the TATA box and several transcription factors are involved.</li>
+      <li><strong>Elongation:</strong> The polymerase opens the DNA, reads the template strand in the 3′→5′ direction and builds RNA in the 5′→3′ direction. It does not need a primer.</li>
+      <li><strong>Termination:</strong> At the <strong>terminator</strong>, the polymerase detaches. In bacteria, the new RNA often forms a hairpin loop there.</li>
+    </ol>`},
+  {h:"Processing in eukaryotes",html:`
+    <p>In eukaryotes, a <strong>pre-mRNA</strong> is made first. Before it leaves the nucleus, it is processed in three steps:</p>
+    <div class="genebar" role="img" aria-label="The pre-mRNA contains exons and introns; the mature mRNA consists of a cap, exons and a poly(A) tail">
+      <div class="gb-row"><span>pre-mRNA</span><span class="seg ex" style="width:80px">Exon 1</span><span class="seg in" style="width:110px">Intron</span><span class="seg ex" style="width:70px">Exon 2</span><span class="seg in" style="width:90px">Intron</span><span class="seg ex" style="width:80px">Exon 3</span></div>
+      <div class="gb-row"><span>mature mRNA</span><span class="seg cap">G</span><span class="seg ex" style="width:80px">Exon 1</span><span class="seg ex" style="width:70px">Exon 2</span><span class="seg ex" style="width:80px">Exon 3</span><span class="seg pa">AAAA…</span></div>
+    </div>
+    <ul>
+      <li><strong>5′ cap:</strong> A modified guanosine protects the 5′ end and helps the ribosome dock.</li>
+      <li><strong>Poly(A) tail:</strong> Around 200 adenine nucleotides at the 3′ end make the mRNA last longer.</li>
+      <li><strong>Splicing:</strong> The spliceosome cuts out the non-coding <strong>introns</strong> and joins the <strong>exons</strong>. Through <strong>alternative splicing</strong>, one gene can produce several proteins.</li>
+    </ul>
+    <p>Bacteria usually have no introns. In bacteria, translation often begins while the mRNA is still being made.</p>`}
+  ],
+  merke:"The mRNA matches the coding strand – with U instead of T. But it is the template strand that gets read.",
+  game:{type:"cloze",title:"Transcription: fill in the blanks",intro:"Choose the right word for each blank. Some words don’t fit anywhere.",
+    text:"At the start of transcription, {{RNA polymerase}} binds to the {{promoter}} of a gene. It reads the {{template}} strand in the 3′→5′ direction and builds the RNA in the {{5′→3′}} direction. Instead of thymine it incorporates {{uracil}}. At the {{terminator}} it detaches again. In eukaryotes, the pre-mRNA then receives a {{5′ cap}} and a {{poly(A) tail}}. During {{splicing}}, the {{introns}} are cut out while the {{exons}} are kept.",
+    extra:["DNA polymerase","thymine","coding","ribosome","3′→5′"]}
+},
+{ id:"translation", title:"Genetic Code & Translation", minutes:16,
+  short:"How a sequence of bases becomes a chain of amino acids.",
+  goals:["Read the genetic code with the codon table","Know the start and stop codons","Describe how translation works at the ribosome"],
+  sections:[
+  {h:"The genetic code",html:`
+    <p>Three consecutive bases of the mRNA form a <strong>codon</strong>, which stands for one amino acid. With four bases there are 4 × 4 × 4 = <strong>64 codons</strong> for 20 amino acids.</p>
+    <ul>
+      <li><strong>Start codon:</strong> AUG – codes for methionine and marks the beginning.</li>
+      <li><strong>Stop codons:</strong> UAA, UAG and UGA end translation.</li>
+      <li><strong>Redundant:</strong> Most amino acids have several codons; leucine, for example, has six.</li>
+      <li><strong>Unambiguous:</strong> Each codon stands for exactly one amino acid.</li>
+      <li><strong>Nearly universal:</strong> Bacteria, plants and humans use almost the same code. That is why E. coli can make human insulin.</li>
+      <li><strong>Read without gaps:</strong> Codons are read without pauses or overlaps in the <strong>reading frame</strong>.</li>
+    </ul>`},
+  {h:"The codon table",html:`
+    <p>Find the first base on the left, the second at the top and the third inside the cell. <span style="color:var(--good)">Green</span> marks the start codon, <span style="color:var(--bad)">red</span> the stop codons.</p>
+    <div data-widget="codons"></div>`},
+  {h:"The ribosome",html:`
+    <p>Ribosomes are made of rRNA and proteins and have a large and a small subunit. Bacteria have 70S ribosomes (50S + 30S), eukaryotes 80S ribosomes (60S + 40S).</p>
+    <p>The ribosome has three binding sites for tRNAs:</p>
+    <ul>
+      <li><strong>A site</strong> (aminoacyl): the new, charged tRNA arrives here.</li>
+      <li><strong>P site</strong> (peptidyl): the tRNA holding the growing chain sits here.</li>
+      <li><strong>E site</strong> (exit): the empty tRNA leaves the ribosome here.</li>
+    </ul>`},
+  {h:"How translation works",html:`
+    <ol>
+      <li><strong>Initiation:</strong> The small subunit binds the mRNA – at the Shine-Dalgarno sequence in bacteria, at the 5′ cap in eukaryotes. The initiator tRNA carrying methionine pairs with AUG, then the large subunit joins.</li>
+      <li><strong>Elongation:</strong> A tRNA with the matching anticodon enters the A site. The rRNA forms a peptide bond, and the ribosome moves forward by one codon.</li>
+      <li><strong>Termination:</strong> When a stop codon reaches the A site, a release factor binds instead of a tRNA. The finished protein is released and the ribosome comes apart.</li>
+    </ol>
+    <p>The amino acid chain then folds into its three-dimensional shape – only then can the protein do its job.</p>`}
+  ],
+  merke:"Three bases, one codon, one amino acid. Start: AUG. Stop: UAA, UAG, UGA.",
+  game:{type:"codon",title:"Crack the code",intro:"Translate the mRNA codon by codon into amino acids. You can show the codon table below.",mrna:"AUG UUC GGA AAU UGG CGC UGA"}
+},
+{ id:"regulation", title:"Gene Regulation", minutes:14,
+  short:"Why not all genes are active at the same time – using the lac operon as an example.",
+  goals:["Explain why cells regulate genes","Predict the lac operon in different situations","Place epigenetic regulation in context"],
+  sections:[
+  {h:"Why genes switch on and off",html:`
+    <p>Almost every cell in your body contains the same DNA. Yet a nerve cell looks very different from a liver cell, because different genes are active in each.</p>
+    <p>Reading genes only when needed saves energy and building materials. It also lets the cell respond to its environment – for example, to a new food source.</p>`},
+  {h:"The lac operon",html:`
+    <p>In 1961, François Jacob and Jacques Monod described how E. coli uses the milk sugar lactose. An <strong>operon</strong> is a group of genes that are transcribed together from one promoter.</p>
+    <dl class="terms">
+      <div><dt>Promoter</dt><dd>Binding site for RNA polymerase.</dd></div>
+      <div><dt>Operator</dt><dd>A switch between the promoter and the genes, where the repressor binds.</dd></div>
+      <div><dt>lacZ, lacY, lacA</dt><dd>Structural genes for β-galactosidase (splits lactose), permease (transports it into the cell) and transacetylase.</dd></div>
+      <div><dt>lacI</dt><dd>Regulatory gene. It codes for the <strong>repressor</strong>.</dd></div>
+    </dl>
+    <ul>
+      <li><strong>Without lactose</strong>, the repressor sits on the operator and blocks RNA polymerase. The genes stay off.</li>
+      <li><strong>With lactose</strong>, allolactose is formed. It binds to the repressor and changes its shape, so the repressor lets go. The genes are transcribed.</li>
+      <li><strong>Glucose</strong> is the preferred sugar. When glucose is plentiful, the signalling molecule cAMP stays low, and the helper protein CAP does not boost transcription.</li>
+    </ul>`},
+  {h:"Simulation: the lac operon",html:`
+    <p>Switch lactose and glucose on and off and watch what happens at the operon.</p>
+    <div data-widget="lac"></div>`},
+  {h:"Regulation in eukaryotes",html:`
+    <ul>
+      <li><strong>Transcription factors</strong> bind to promoters and switch genes on or off.</li>
+      <li><strong>Enhancers</strong> and <strong>silencers</strong> boost or dampen transcription – even from thousands of base pairs away.</li>
+      <li><strong>Epigenetics:</strong> methyl groups on DNA usually switch genes off. Acetylated histones loosen the chromatin and make it easier to read. The sequence itself does not change.</li>
+      <li><strong>After transcription:</strong> alternative splicing and miRNAs determine which proteins are actually made.</li>
+    </ul>`},
+  {h:"In the iGEM lab",html:`
+    <p>The lac promoter is a standard tool in synthetic biology. Instead of lactose, labs use <strong>IPTG</strong>: it binds the repressor like allolactose but is not broken down by the cell. This lets you switch an inserted gene on exactly when you need it.</p>`}
+  ],
+  merke:"Without lactose, the repressor blocks the operator. With lactose, it lets go – and without glucose, the genes are transcribed especially strongly.",
+  game:{type:"mc",title:"What happens at the operon?",intro:"Five situations – predict how the cell responds.",q:[
+    {t:"An E. coli cell grows without lactose. What happens at the lac operon?",o:["The repressor sits on the operator and the genes are off","The genes are strongly transcribed","The repressor is broken down","The cell makes lactose itself"],a:0,e:"Without lactose there is no inducer (allolactose). The repressor stays on the operator and blocks RNA polymerase."},
+    {t:"Lactose is present, glucose is not. How active is the operon?",o:["Switched off","Only weakly active","Strongly active","It depends on the light"],a:2,e:"The repressor has let go, and because glucose is scarce, cAMP is high. CAP–cAMP boosts transcription."},
+    {t:"A mutation prevents the repressor from binding to the operator. What follows?",o:["The genes are permanently off","The genes are permanently on, even without lactose","The cell can no longer make RNA","Nothing changes"],a:1,e:"Without a working repressor, nothing blocks the operator. The genes are transcribed all the time – this is called constitutive expression."},
+    {t:"Why do labs use IPTG instead of lactose to switch genes on?",o:["IPTG is cheaper than sugar","IPTG binds the repressor but is not broken down","IPTG destroys the operator","IPTG replaces RNA polymerase"],a:1,e:"IPTG acts as an inducer but is not metabolised. Its concentration stays constant – ideal for experiments."},
+    {t:"What does heavy DNA methylation in a gene’s promoter usually do?",o:["The gene is transcribed more strongly","The gene is switched off","The DNA sequence changes","The gene is duplicated"],a:1,e:"Methylated promoters are recognised less well. This is a typical epigenetic switch-off mechanism that does not change the sequence."}]}
+},
+{ id:"mutation", title:"Mutations & DNA Repair", minutes:14,
+  short:"Which errors can occur in DNA, what they cause and how the cell repairs them.",
+  goals:["Distinguish silent, missense and nonsense mutations","Explain a frameshift","Name causes and repair pathways"],
+  sections:[
+  {h:"What is a mutation?",html:`
+    <p>A <strong>mutation</strong> is a permanent change in the DNA sequence. It can have an effect, but it doesn’t have to.</p>
+    <ul>
+      <li><strong>Germline mutations</strong> affect egg or sperm cells and are inherited.</li>
+      <li><strong>Somatic mutations</strong> arise in body cells. They are not inherited but can, for example, cause cancer.</li>
+    </ul>
+    <p>Besides gene mutations, there are changes to whole chromosomes and changes in chromosome number, such as trisomy 21.</p>`},
+  {h:"Types of gene mutation",html:`
+    <dl class="terms">
+      <div><dt>Silent</dt><dd>A base changes, but the new codon codes for the same amino acid – thanks to the redundancy of the code.</dd></div>
+      <div><dt>Missense</dt><dd>The new codon codes for a different amino acid. Example, sickle cell disease: GAG → GUG in β-globin, i.e. glutamic acid → valine.</dd></div>
+      <div><dt>Nonsense</dt><dd>A stop codon is created. The protein ends too early and usually doesn’t work.</dd></div>
+      <div><dt>Frameshift</dt><dd>If bases are inserted or deleted and their number is not a multiple of 3, the <strong>reading frame</strong> shifts.</dd></div>
+    </dl>
+    <p>Imagine DNA as a sentence made of three-letter words:</p>
+    <div class="frame">
+      <div><span class="lbl">Original</span><code>THE CAT ATE THE RAT</code></div>
+      <div><span class="lbl">Substitution</span><code>THE <mark>B</mark>AT ATE THE RAT</code><small>One word changes – like a missense mutation.</small></div>
+      <div><span class="lbl">Deletion of “H”</span><code>TEC ATA TET HER AT</code><small>After the deletion nothing makes sense any more – a frameshift.</small></div>
+    </div>`},
+  {h:"Causes",html:`
+    <ul>
+      <li><strong>Spontaneous errors:</strong> mistakes during replication or chemical changes to bases, for example when cytosine turns into uracil.</li>
+      <li><strong>UV radiation</strong> links neighbouring thymines into <strong>thymine dimers</strong>.</li>
+      <li><strong>Ionising radiation</strong> such as X-rays can cut through both strands.</li>
+      <li><strong>Chemical mutagens</strong>, such as benzo[a]pyrene in cigarette smoke, alter bases.</li>
+    </ul>`},
+  {h:"How the cell repairs DNA",html:`
+    <dl class="terms">
+      <div><dt>Mismatch repair</dt><dd>Detects mispaired bases right after replication and replaces them in the new strand.</dd></div>
+      <div><dt>Base excision</dt><dd>Removes single damaged bases and replaces them.</dd></div>
+      <div><dt>Nucleotide excision</dt><dd>Cuts out larger damage such as thymine dimers. If it fails, the disease xeroderma pigmentosum results, with extreme sensitivity to light.</dd></div>
+      <div><dt>Double-strand break</dt><dd>Is either joined quickly but error-prone (NHEJ) or repaired exactly using an intact copy (homologous recombination). CRISPR/Cas9 makes use of both (module 12).</dd></div>
+    </dl>`}
+  ],
+  merke:"If bases are inserted or deleted and their number is not a multiple of 3, the reading frame shifts – usually with serious consequences.",
+  game:{type:"sort",title:"Classify the mutations",intro:"Assign each change to the right type of mutation. The codons refer to the mRNA.",cats:["Silent","Missense","Nonsense","Frameshift"],items:[
+    ["GAA (Glu) → GAG (Glu)",0],
+    ["GAG (Glu) → GUG (Val)",1],
+    ["UAC (Tyr) → UAA (Stop)",2],
+    ["A single nucleotide is inserted in the middle of a gene",3],
+    ["CUU (Leu) → CUC (Leu)",0],
+    ["UGG (Trp) → UGA (Stop)",2],
+    ["Two nucleotides directly after the start codon are missing",3],
+    ["AAA (Lys) → AGA (Arg)",1]]}
+},
+{ id:"engineering", title:"Genetic Engineering: Cut & Paste", minutes:16,
+  short:"Restriction enzymes, ligase and plasmids – the basic tools for recombining DNA.",
+  goals:["Explain how restriction enzymes cut","Distinguish sticky and blunt ends","Name the steps of cloning"],
+  sections:[
+  {h:"Restriction enzymes",html:`
+    <p>Bacteria defend themselves against viruses with <strong>restriction enzymes</strong>: these enzymes recognise short, specific DNA sequences and cut them. The bacterium protects its own DNA by methylating it.</p>
+    <p>The recognition sequences are usually 4–8 base pairs long and <strong>palindromic</strong>: both strands read the same in the 5′→3′ direction.</p>
+    <div class="strands"><span class="lbl">EcoRI cuts</span>5′-G<span class="scis">|</span>AATTC-3′<br><span class="lbl"></span>3′-CTTAA<span class="scis">|</span>G-5′</div>
+    <div class="tbl"><table>
+      <thead><tr><th>Enzyme</th><th>Source</th><th>Cut</th><th>Ends</th></tr></thead>
+      <tbody>
+        <tr><td><strong>EcoRI</strong></td><td>Escherichia coli</td><td class="mono">G^AATTC</td><td>sticky, overhang AATT</td></tr>
+        <tr><td><strong>BamHI</strong></td><td>Bacillus amyloliquefaciens</td><td class="mono">G^GATCC</td><td>sticky, overhang GATC</td></tr>
+        <tr><td><strong>HindIII</strong></td><td>Haemophilus influenzae</td><td class="mono">A^AGCTT</td><td>sticky, overhang AGCT</td></tr>
+        <tr><td><strong>SmaI</strong></td><td>Serratia marcescens</td><td class="mono">CCC^GGG</td><td>blunt</td></tr>
+      </tbody>
+    </table></div>`},
+  {h:"Sticky and blunt ends",html:`
+    <ul>
+      <li><strong>Sticky ends</strong> are created when the enzyme cuts in a staggered way. The single-stranded overhangs find matching partners like puzzle pieces.</li>
+      <li><strong>Blunt ends</strong> are created by a straight cut. They can be joined to any other blunt end, but less efficiently.</li>
+    </ul>
+    <p><strong>DNA ligase</strong> – in the lab usually T4 ligase – then seals the sugar-phosphate backbone.</p>`},
+  {h:"Plasmids as gene carriers",html:`
+    <p>To get a gene into a bacterium, you insert it into a <strong>plasmid</strong>, known as a vector. A typical cloning vector contains:</p>
+    <ul>
+      <li>an <strong>origin of replication</strong> (ori), so that the bacterium copies the plasmid,</li>
+      <li>an <strong>antibiotic resistance gene</strong> to select cells that carry the plasmid,</li>
+      <li>a <strong>multiple cloning site</strong> with many cut sites for the insert,</li>
+      <li>often a <strong>promoter</strong> that gets the inserted gene transcribed.</li>
+    </ul>`},
+  {h:"Cloning in five steps",html:`
+    <ol>
+      <li><strong>Cut:</strong> The gene and the plasmid are cut with the same restriction enzyme.</li>
+      <li><strong>Ligate:</strong> Both are mixed, and ligase joins the matching ends.</li>
+      <li><strong>Transform:</strong> The plasmid gets into E. coli by heat shock or electroporation.</li>
+      <li><strong>Select:</strong> Only bacteria with the plasmid grow on agar containing antibiotic. In blue-white screening, the insert disrupts the lacZα gene, so colonies with the insert stay white.</li>
+      <li><strong>Verify:</strong> Colony PCR or sequencing confirms the correct construct.</li>
+    </ol>
+    <p>This is how human insulin has been produced in bacteria since 1982 – before that, it was extracted from the pancreases of pigs and cattle.</p>`}
+  ],
+  merke:"Same enzyme, same ends: whatever was cut with the same restriction enzyme can be joined with ligase.",
+  game:{type:"cut",title:"Find the cut site",intro:"Three restriction enzymes, three sequences. Tap the gap where the enzyme cuts the top strand.",rounds:[
+    {seq:"ACGTTGAATTCGCAT",cut:6,task:"Cut the top strand with EcoRI.",hint:"EcoRI recognises GAATTC and cuts between G and A.",ok:"Correct: G^AATTC. This creates a sticky end with the overhang AATT."},
+    {seq:"TCCAGGATCCTTAG",cut:5,task:"Now BamHI.",hint:"BamHI recognises GGATCC and cuts after the first G.",ok:"Correct: G^GATCC – the overhang is GATC."},
+    {seq:"GCTAAGCTTCGAT",cut:4,task:"Finally, HindIII.",hint:"HindIII recognises AAGCTT and cuts after the first A.",ok:"Correct: A^AGCTT – the overhang is AGCT."}]}
+},
+{ id:"pcr", title:"PCR – Copying DNA", minutes:14,
+  short:"How a few DNA molecules become billions of copies in two hours.",
+  goals:["Name the components of a PCR","Describe the three steps of a cycle with their temperatures","Calculate exponential growth"],
+  sections:[
+  {h:"The idea",html:`
+    <p>The <strong>polymerase chain reaction</strong> (PCR) copies a specific stretch of DNA in a test tube. Kary Mullis developed it in 1983 and received the Nobel Prize in Chemistry for it in 1993.</p>
+    <p>Today PCR is used in every lab: for cloning, paternity tests, forensics and diagnosing infections.</p>`},
+  {h:"What goes into the tube",html:`
+    <ul>
+      <li><strong>Template DNA</strong> containing the target region,</li>
+      <li>two <strong>primers</strong> (forward and reverse, usually 18–25 nucleotides long) that flank the region on either side,</li>
+      <li>a heat-stable <strong>Taq polymerase</strong> from Thermus aquaticus, a bacterium from hot springs,</li>
+      <li>the four building blocks, the <strong>dNTPs</strong> (dATP, dTTP, dGTP, dCTP),</li>
+      <li>a <strong>buffer</strong> containing magnesium ions, which the polymerase needs.</li>
+    </ul>`},
+  {h:"One cycle, three steps",html:`
+    <div class="steps">
+      <div class="step s1"><b>94–98 °C</b><strong>1 · Denaturation</strong><span>The hydrogen bonds break and the double strand separates.</span></div>
+      <div class="step s2"><b>50–65 °C</b><strong>2 · Annealing</strong><span>The primers attach to their complementary sites.</span></div>
+      <div class="step s3"><b>72 °C</b><strong>3 · Extension</strong><span>Taq polymerase extends the primers, about 1,000 bases per minute.</span></div>
+    </div>
+    <p>A <strong>thermocycler</strong> repeats these steps automatically 25 to 35 times. The annealing temperature depends on the primers: the more GC-rich they are, the higher it can be.</p>`},
+  {h:"Exponential growth",html:`
+    <p>Each cycle doubles the number of target molecules. After <em>n</em> cycles, one molecule becomes 2<sup>n</sup> copies. Move the slider:</p>
+    <div data-widget="pcr"></div>`},
+  {h:"Variants",html:`
+    <ul>
+      <li><strong>RT-PCR:</strong> a reverse transcriptase first writes RNA into DNA. This makes it possible to detect RNA viruses.</li>
+      <li><strong>qPCR</strong> (real-time PCR): a fluorescence signal shows how much DNA has been made in each cycle, which lets you calculate the starting amount. This is how COVID-19 PCR tests worked.</li>
+      <li><strong>Colony PCR:</strong> checks directly from a bacterial colony whether a plasmid carries the correct insert.</li>
+    </ul>`}
+  ],
+  merke:"Denature (≈ 95 °C), anneal (≈ 55 °C), extend (72 °C). Each cycle doubles the target DNA.",
+  game:{type:"match",title:"PCR memory",intro:"Match each term to the right description.",pairs:[
+    ["Denaturation","At about 95 °C the DNA double strand separates"],
+    ["Annealing","At about 55 °C the primers bind to the single strands"],
+    ["Extension","At 72 °C the polymerase builds the new strand"],
+    ["Taq polymerase","Heat-stable enzyme from a hot-spring bacterium"],
+    ["Primers","Short DNA pieces that mark the start and end of the region"],
+    ["dNTPs","The four nucleotide building blocks for the new strands"],
+    ["Thermocycler","Machine that runs the temperature cycles automatically"]]}
+},
+{ id:"analysis", title:"Gel Electrophoresis & Sequencing", minutes:14,
+  short:"How DNA is separated by size, made visible and read base by base.",
+  goals:["Read an agarose gel and estimate fragment sizes","Explain the principle of Sanger sequencing","Place modern sequencing methods in context"],
+  sections:[
+  {h:"Gel electrophoresis",html:`
+    <p><strong>Gel electrophoresis</strong> separates DNA fragments by size:</p>
+    <ul>
+      <li>The DNA is pipetted into the wells of an <strong>agarose gel</strong>, typically 1% agarose.</li>
+      <li>Its phosphate groups make DNA <strong>negatively charged</strong>, so in an electric field it moves towards the <strong>positive pole</strong> (anode).</li>
+      <li>The gel works like a sieve: <strong>small fragments travel faster and further</strong> than large ones.</li>
+      <li>A fluorescent dye makes the bands visible under UV or blue light.</li>
+    </ul>`},
+  {h:"How to read a gel",html:`
+    <figure class="diagram" style="max-width:420px">
+      <div data-widget="gel"></div>
+      <figcaption>Lane M is a size marker with known fragment lengths. The band in lane C sits at 250 bp.</figcaption>
+    </figure>
+    <p>A <strong>size marker</strong> (DNA ladder) is always run next to the samples. By comparing the height of a sample band with the marker bands, you can estimate the size of the fragment.</p>`},
+  {h:"Sanger sequencing",html:`
+    <p>In 1977, Frederick Sanger developed the <strong>chain-termination method</strong>:</p>
+    <ul>
+      <li>Besides the normal dNTPs, the reaction contains a small amount of <strong>ddNTPs</strong> (dideoxynucleotides). They lack the 3′-OH group.</li>
+      <li>When a ddNTP is incorporated, no further nucleotide can be added – the chain stops.</li>
+      <li>This produces fragments of every length. Each type of ddNTP glows in its own colour.</li>
+      <li>Capillary electrophoresis sorts the fragments by length, and a laser reads the colours one after another – that is the sequence.</li>
+    </ul>
+    <p>Sanger sequencing reads up to about 1,000 bases and is still the standard method for checking plasmids.</p>`},
+  {h:"Next-generation sequencing",html:`
+    <ul>
+      <li><strong>Illumina:</strong> millions of short DNA fragments are read in parallel.</li>
+      <li><strong>Nanopore:</strong> a DNA strand is pulled through a tiny pore. Changes in the electric current reveal the bases – in real time and often over tens of thousands of bases in one go.</li>
+    </ul>
+    <p>The Human Genome Project took 13 years and about 3 billion US dollars. Today a human genome can be sequenced for less than 1,000 US dollars.</p>`}
+  ],
+  merke:"In a gel, DNA moves towards the positive pole – small fragments travel furthest. In Sanger sequencing, ddNTPs stop the chain.",
+  game:{type:"mc",title:"Gel and sequencing quiz",intro:"Five questions, including a gel to analyse.",q:[
+    {t:"In which direction does DNA move in an electric field?",o:["To the negative pole (cathode)","To the positive pole (anode)","It stays in the well","It depends on the base"],a:1,e:"The phosphate groups in the backbone make DNA negatively charged, so it moves towards the positive pole."},
+    {t:"Roughly how large is the DNA fragment in lane A?",fig:"GEL",o:["≈ 250 bp","≈ 500 bp","≈ 1,000 bp","≈ 3,000 bp"],a:2,e:"The band in lane A is level with the 1,000 bp band of size marker M."},
+    {t:"One fragment is 200 bp long, another 2,000 bp. Which one travels further?",o:["The 200 bp fragment","The 2,000 bp fragment","Both travel equally far","It depends only on the dye"],a:0,e:"Small fragments pass through the agarose mesh more easily and therefore travel further."},
+    {t:"Why does synthesis stop when a ddNTP is incorporated?",o:["It lacks the 3′-OH group needed for the next bond","It is too large for the polymerase","It carries no base","It destroys the primer"],a:0,e:"Without a 3′-OH group no further nucleotide can be attached – the chain ends exactly at this base."},
+    {t:"Which method delivers very long reads in real time?",o:["Sanger sequencing","Illumina","Nanopore sequencing","Gel electrophoresis"],a:2,e:"In nanopore sequencing, a single strand is pulled through a pore and read directly as it passes."}]}
+},
+{ id:"crispr", title:"CRISPR/Cas9", minutes:18,
+  short:"The gene scissors: how a bacterial immune system became the most precise tool in genetic engineering.",
+  goals:["Explain the roles of Cas9, guide RNA and PAM","Determine where Cas9 cuts","Distinguish knockout and knock-in"],
+  sections:[
+  {h:"A bacterial immune system",html:`
+    <p><strong>CRISPR</strong> stands for Clustered Regularly Interspaced Short Palindromic Repeats. In this region of their DNA, bacteria store short pieces of viruses that have attacked them before – a kind of genetic memory.</p>
+    <p>If the virus attacks again, the bacterium transcribes the stored pieces into RNA. This RNA guides <strong>Cas proteins</strong> to the matching viral DNA, which is then cut.</p>`},
+  {h:"The gene scissors",html:`
+    <p>In 2012, <strong>Emmanuelle Charpentier</strong> and <strong>Jennifer Doudna</strong> showed that this system can be programmed to target any DNA sequence. They received the Nobel Prize in Chemistry for this in 2020.</p>
+    <dl class="terms">
+      <div><dt>Cas9</dt><dd>The enzyme that cuts through both DNA strands.</dd></div>
+      <div><dt>Guide RNA</dt><dd>An RNA with about 20 nucleotides that are complementary to the target site. It determines where Cas9 cuts.</dd></div>
+      <div><dt>PAM</dt><dd>A short sequence directly after the target site. Cas9 from Streptococcus pyogenes needs <span class="mono">5′-NGG-3′</span>, where N can be any base. Without a PAM, Cas9 does not cut.</dd></div>
+    </dl>
+    <p>Cas9 cuts <strong>3 base pairs before the PAM</strong>, creating a blunt double-strand break:</p>
+    <div class="seqdemo">5′-…<span class="proto">AGCTTGCATCGGACTTA<span class="scis">✂</span>GCA</span><span class="pamhl">CGG</span>…-3′</div>
+    <div class="legend"><span><i></i>Target sequence (20 nt)</span><span><i style="background:var(--c4)"></i>PAM</span><span><b class="scis">✂</b> Cut site</span></div>`},
+  {h:"Repair decides the outcome",html:`
+    <p>The cell repairs the double-strand break itself. Which pathway it uses determines the result:</p>
+    <ul>
+      <li><strong>NHEJ</strong> (non-homologous end joining): fast but imprecise. Small insertions or deletions often arise that shift the reading frame – the gene is switched off (<strong>knockout</strong>).</li>
+      <li><strong>HDR</strong> (homology-directed repair): if a repair template is supplied, it is incorporated exactly. This allows genes to be corrected or new sequences to be inserted (<strong>knock-in</strong>).</li>
+    </ul>`},
+  {h:"Applications",html:`
+    <ul>
+      <li><strong>Medicine:</strong> at the end of 2023, Casgevy became the first approved CRISPR therapy – for sickle cell disease and β-thalassaemia.</li>
+      <li><strong>Base editing and prime editing</strong> change individual bases without cutting both strands.</li>
+      <li><strong>dCas9:</strong> a Cas9 without cutting activity can switch genes on or off in a targeted way (CRISPRa/CRISPRi).</li>
+      <li><strong>Diagnostics:</strong> related enzymes such as Cas12 and Cas13 detect viral genetic material quickly.</li>
+    </ul>`},
+  {h:"Ethical questions",html:`
+    <p>In 2018, the researcher He Jiankui announced the birth of the first children with edited genomes – which was strongly condemned worldwide. Changes to the germline are passed on to future generations.</p>
+    <p>Other open questions include unintended cuts at similar sites (off-target effects), fair access to expensive therapies and <strong>gene drives</strong>, which could alter entire wild populations.</p>`}
+  ],
+  merke:"The guide RNA finds the site, Cas9 cuts – 3 base pairs before the PAM sequence NGG.",
+  game:{type:"cut",title:"Where does Cas9 cut?",intro:"Two target sequences. Tap the gap where Cas9 makes the double-strand break.",rounds:[
+    {seq:"ATGACGTTACCGGATCAAGCTATGGCA",cut:19,marks:[{from:2,to:22,cls:"proto"},{from:22,to:25,cls:"pam"}],legend:true,task:"The target sequence and PAM are highlighted. Where does Cas9 cut?",hint:"Cas9 cuts 3 base pairs before (upstream of) the PAM.",ok:"Exactly! A blunt double-strand break forms three bases before the PAM."},
+    {seq:"GTCCTTGACCAGTAGGCTAACGTCAGGTA",cut:21,marks:[{from:4,to:24,cls:"proto"}],legend:true,task:"This time only the target sequence is highlighted. Find the PAM first – then the cut site.",hint:"The PAM is NGG and follows directly after the 3′ end of the target sequence. Here it is AGG.",ok:"Perfect: the PAM is AGG, and Cas9 cuts three bases before it."}]}
+},
+{ id:"synbio", title:"Synthetic Biology & iGEM", minutes:14,
+  short:"Biology as engineering: standard parts, genetic circuits and responsibility.",
+  goals:["Describe the design-build-test-learn cycle","Assemble an expression cassette from standard parts","Understand biosafety and human practices"],
+  sections:[
+  {h:"Biology as engineering",html:`
+    <p><strong>Synthetic biology</strong> applies engineering principles to living systems: you design biological functions, build them from standardised parts and test them.</p>
+    <ol>
+      <li><strong>Design:</strong> plan a genetic construct on the computer.</li>
+      <li><strong>Build:</strong> synthesise or clone the DNA.</li>
+      <li><strong>Test:</strong> measure whether the system works as planned.</li>
+      <li><strong>Learn:</strong> learn from the data and improve the design.</li>
+    </ol>`},
+  {h:"Standard parts: BioBricks",html:`
+    <p>iGEM collects genetic parts in the <strong>Registry of Standard Biological Parts</strong> – now more than 20,000 of them. Almost every construct designed to make a protein follows the same basic architecture:</p>
+    <figure class="diagram">
+      <svg viewBox="0 0 520 120" role="img" aria-label="Expression cassette: promoter, RBS, CDS, terminator">
+        <path class="sv-par" d="M10 72 H510"/>
+        <path d="M44 72 V40 H86" style="fill:none;stroke:var(--c5);stroke-width:4;stroke-linecap:round;stroke-linejoin:round"/><polygon points="98,40 84,32 84,48" style="fill:var(--c5)"/>
+        <path d="M118 72 A18 18 0 0 1 154 72 Z" style="fill:var(--c4)"/>
+        <path d="M180 56 H350 L372 72 L350 88 H180 Z" style="fill:var(--c1)"/>
+        <text class="sv-w" x="272" y="76" text-anchor="middle" style="font-size:13px">GFP</text>
+        <path d="M430 72 V40 M412 40 H448" style="fill:none;stroke:var(--c3);stroke-width:4;stroke-linecap:round"/>
+        <text class="sv-t strong" x="64" y="108" text-anchor="middle">Promoter</text>
+        <text class="sv-t strong" x="136" y="108" text-anchor="middle">RBS</text>
+        <text class="sv-t strong" x="272" y="108" text-anchor="middle">CDS</text>
+        <text class="sv-t strong" x="430" y="108" text-anchor="middle">Terminator</text>
+      </svg>
+      <figcaption>The symbols follow the SBOL standard that teams use to draw their constructs.</figcaption>
+    </figure>
+    <dl class="terms">
+      <div><dt>Promoter</dt><dd>Where RNA polymerase starts. It determines when and how strongly the gene is transcribed.</dd></div>
+      <div><dt>RBS</dt><dd>The ribosome binding site on the mRNA. Its strength controls how much protein is made.</dd></div>
+      <div><dt>CDS</dt><dd>The coding sequence – from the start codon ATG to the stop codon.</dd></div>
+      <div><dt>Terminator</dt><dd>Ends transcription so that neighbouring parts are not transcribed as well.</dd></div>
+    </dl>`},
+  {h:"Genetic circuits",html:`
+    <p>These parts can be combined into circuits, much like in electronics. Two famous examples date from 2000:</p>
+    <ul>
+      <li>The <strong>toggle switch</strong> by Gardner and Collins: two genes that repress each other. The cell stays in one of two stable states – like a light switch.</li>
+      <li>The <strong>repressilator</strong> by Elowitz and Leibler: three repressors in a loop that make the cell glow rhythmically – a biological clock.</li>
+    </ul>
+    <p><strong>Reporter genes</strong> such as GFP from the jellyfish Aequorea victoria act as measuring instruments: they show when a promoter is active.</p>`},
+  {h:"Safety & responsibility",html:`
+    <ul>
+      <li><strong>Biosafety:</strong> labs are classified into biosafety levels by risk (BSL-1 to BSL-4). School labs and most iGEM projects work with harmless organisms at the lowest level.</li>
+      <li><strong>Built-in safety:</strong> kill switches or strains that cannot survive without a specific nutrient prevent them from spreading outside the lab.</li>
+      <li><strong>Human practices:</strong> iGEM teams talk to experts, affected people and the public to make sure their project is responsible and genuinely useful.</li>
+    </ul>`}
+  ],
+  merke:"Promoter – RBS – CDS – terminator: the basic architecture of almost every construct designed to make a protein.",
+  game:{type:"order",title:"Build a GFP construct",intro:"Drag the parts into the order in which they appear on the DNA, from 5′ to 3′.",items:[
+    "Promoter – where RNA polymerase binds",
+    "RBS – the ribosome binding site",
+    "Start codon ATG",
+    "CDS – the gene for green fluorescent protein (GFP)",
+    "Stop codon",
+    "Terminator – where transcription ends"]}
+}
+];
+/* ===================================================================== */
+
+const TONES=["var(--c1)","var(--c2)","var(--c3)","var(--c4)","var(--c5)","var(--c6)"];
+MODULES.forEach((m,i)=>{m.idx=i;m.num=i+1;m.tone=TONES[i%TONES.length]});
+const N=MODULES.length, PASS=0.8;
+const LABEL={match:"Matching",complement:"Base-pair puzzle",mc:"Quiz",order:"Put in order",cloze:"Fill in the blanks",codon:"Crack the code",sort:"Classify",cut:"Find the cut site"};
+const ALWAYS_PASS={match:1,order:1,cut:1};
+
+/* ---------- State ---------- */
+const $=(s,r=document)=>r.querySelector(s);
+const KEY="mb-progress-en-v1";
+function load(){try{const v=JSON.parse(localStorage.getItem(KEY));if(v&&v.passed)return v}catch(e){}return{passed:{},unlockAll:false}}
+let P=load();
+const persist=()=>{try{localStorage.setItem(KEY,JSON.stringify(P))}catch(e){}};
+const isPassed=m=>!!(m&&P.passed[m.id]);
+const isUnlocked=m=>P.unlockAll||m.idx===0||isPassed(m)||isPassed(MODULES[m.idx-1]);
+const status=m=>isPassed(m)?"done":isUnlocked(m)?"open":"locked";
+const doneCount=()=>MODULES.filter(isPassed).length;
+const nextModule=()=>MODULES.find(m=>isUnlocked(m)&&!isPassed(m))||null;
+const pct=x=>Math.round(x*100)+"%";
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const badgeInner=(m,s)=>s==="done"?ICON.check:s==="locked"?ICON.lock:m.num;
+const plural=(n,one,many)=>n===1?one:many;
+
+/* ---------- Sidebar ---------- */
+function renderNav(cur){
+  let h=`<button class="home-link" data-go="home" ${!cur?'aria-current="page"':''}>${ICON.home}Overview</button><span class="label nav-label">Learning path</span>`;
+  MODULES.forEach(m=>{const s=status(m),act=cur===m;
+    h+=`<div style="--tone:${m.tone}"><button class="mrow ${s}" data-go="${m.id}" ${act?'aria-current="page"':''} aria-label="Module ${m.num}: ${m.title}${s==="locked"?" (locked)":s==="done"?" (completed)":""}"><span class="badge">${badgeInner(m,s)}</span><span class="mname">${m.title}</span></button>`;
+    if(act&&s!=="locked")h+=`<div class="subnav">${m.sections.map((x,i)=>`<button data-sec="s-${m.id}-${i}">${x.h}</button>`).join("")}<button class="sub-game" data-sec="s-${m.id}-game">${ICON.game}Knowledge check</button></div>`;
+    h+=`</div>`});
+  $("#nav").innerHTML=h;
+  const d=doneCount();
+  $("#spText").textContent=`${d} of ${N} modules completed`;
+  $("#spPct").textContent=pct(d/N);
+  $("#spBar").style.width=(d/N*100)+"%";
+  $("#topProg").textContent=`${d}/${N}`;
+  $("#unlockBtn").setAttribute("aria-pressed",P.unlockAll);
+  renderReset(false);
+}
+function renderReset(ask){
+  $("#resetWrap").innerHTML=ask
+    ?`<div class="confirm">Delete all progress? <button class="danger" id="resetYes">Yes, delete</button><button id="resetNo">Cancel</button></div>`
+    :`<button class="tool" id="resetBtn">${ICON.redo} Reset progress</button>`;
+}
+
+/* ---------- Dashboard ---------- */
+function ringSVG(p){
+  const r=92,c=2*Math.PI*r;
+  return `<svg viewBox="0 0 220 220" aria-hidden="true"><defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--c1)"/><stop offset=".5" style="stop-color:var(--c2)"/><stop offset="1" style="stop-color:var(--c3)"/></linearGradient></defs>
+  <circle cx="110" cy="110" r="${r}" fill="none" style="stroke:var(--hair)" stroke-width="14"/>
+  <circle cx="110" cy="110" r="${r}" fill="none" stroke="url(#rg)" stroke-width="14" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-p)}" transform="rotate(-90 110 110)" style="transition:stroke-dashoffset 1s"/></svg>`;
+}
+function renderHome(){
+  const d=doneCount(), nx=nextModule(), all=d===N;
+  const scores=MODULES.filter(isPassed).map(m=>P.passed[m.id].score);
+  const avg=scores.length?scores.reduce((a,b)=>a+b,0)/scores.length:null;
+  const mins=MODULES.reduce((a,m)=>a+m.minutes,0);
+  const cta=all?{id:MODULES[0].id,t:"Review the course"}:d===0&&nx===MODULES[0]?{id:MODULES[0].id,t:"Start with module 1"}:{id:(nx||MODULES[0]).id,t:`Continue with module ${(nx||MODULES[0]).num}`};
+  $("#view").innerHTML=`<div class="view" style="display:flex;flex-direction:column;gap:22px">
+  <section class="hero glass">
+    <div>
+      <span class="label">iGEM 2026 · Learning platform</span>
+      <h1>Molecular biology, <em>step by step</em></h1>
+      <p class="lead">${N} modules that build on each other take you from the DNA double helix to CRISPR/Cas9. Each module ends with a mini-game – pass it to unlock the next module. Completed modules stay open for review at any time.</p>
+      <div class="cta">
+        <button class="btn dark" data-go="${cta.id}">${cta.t} ${ICON.arrow}</button>
+        <button class="btn" data-scroll="path">View learning path</button>
+      </div>
+    </div>
+    <div class="ring-wrap">${ringSVG(d/N)}<div class="ring-c"><b>${d}<small>/${N}</small></b><span>modules completed</span></div></div>
+  </section>
+
+  ${all?`<section class="finish glass"><span class="badge done">${ICON.trophy}</span><div><h3>Course complete!</h3><p>You have passed all ${N} modules. All content stays open for review and reference.</p></div></section>`:""}
+
+  <section class="stats glass" aria-label="Your progress">
+    <div class="stat"><b>Module ${d} of ${N}</b><span>completed</span><div class="track"><i style="width:${d/N*100}%"></i></div></div>
+    <div class="stat"><b>${avg===null?"–":pct(avg)}</b><span>average score in the knowledge checks</span></div>
+    <div class="stat"><b>≈ ${Math.round(mins/60)} h</b><span>learning time for the whole course (${mins} minutes)</span></div>
+  </section>
+
+  <div class="section-head" id="path">
+    <h2>Your <em>learning path</em></h2>
+    <p>The modules build on each other. A locked module opens as soon as you pass the previous one.</p>
+  </div>
+  <ol class="path">
+    ${MODULES.map(m=>{const s=status(m),isNx=nx===m;return `<li class="path-row ${s} ${isNx?"next":""}" style="--tone:${m.tone}">
+      <div class="node"><span class="badge">${badgeInner(m,s)}</span></div>
+      <button class="path-card glass" data-go="${m.id}">
+        <div><span class="pc-num">Module ${m.num}</span><h3>${m.title}</h3><p>${m.short}</p></div>
+        <div class="pc-side"><span class="pill ${s}">${s==="done"?"Completed":s==="locked"?"Locked":isNx?"Up next":"Available"}</span>
+        <span class="pc-meta">${m.minutes} min · ${LABEL[m.game.type]}${s==="done"?" · "+pct(P.passed[m.id].score):""}</span></div>
+      </button></li>`}).join("")}
+  </ol></div>`;
+}
+
+/* ---------- Locked page ---------- */
+function renderLocked(m){
+  const prev=MODULES[m.idx-1], nx=nextModule();
+  $("#view").innerHTML=`<div class="view" style="--tone:${m.tone}"><section class="lockpage glass">
+    <span class="badge locked">${ICON.lock}</span>
+    <span class="label">Module ${m.num} of ${N}</span>
+    <h1>${m.title}</h1>
+    <p>This module is still locked. Pass the knowledge check in module ${prev.num}, “${prev.title}”, to unlock it.</p>
+    <ul>${m.goals.map(g=>`<li>${g}</li>`).join("")}</ul>
+    <button class="btn dark" data-go="${(nx||prev).id}">Continue with module ${(nx||prev).num} ${ICON.arrow}</button>
+  </section></div>`;
+}
+
+/* ---------- Module page ---------- */
+function renderModule(m){
+  const g=m.game, passed=isPassed(m);
+  $("#view").innerHTML=`<div class="view mod-page" style="--tone:${m.tone}">
+    <header class="mod-head">
+      <div class="crumbs"><button class="back" data-go="home">${ICON.back} Overview</button><span class="chap">Module ${m.num} of ${N}</span></div>
+      <h1>${m.title}</h1>
+      <p class="intro">${m.short}</p>
+      <div class="meta"><span>${ICON.clock} ${m.minutes} minutes</span><span>${ICON.game} Mini-game: ${LABEL[g.type]}</span><span id="modStatus" class="${passed?"ok":""}">${passed?ICON.check+" Completed":"Not completed yet"}</span></div>
+    </header>
+    <section class="goals glass"><span class="label">What you’ll learn</span><ul>${m.goals.map(x=>`<li>${x}</li>`).join("")}</ul></section>
+    <article class="paper glass"><div class="prose">
+      ${m.sections.map((s,i)=>`<section class="sec" id="s-${m.id}-${i}"><h2 data-n="${String(i+1).padStart(2,"0")}">${s.h}</h2>${s.html}</section>`).join("")}
+      <aside class="merke"><span class="label">Key takeaway</span><p>${m.merke}</p></aside>
+    </div></article>
+    <section class="game glass" id="s-${m.id}-game">
+      <div class="game-head"><span class="label">Knowledge check · ${LABEL[g.type]}</span><h2>${g.title}</h2><p>${g.intro}</p>
+        <p class="already" id="already">${passed?`Already passed with ${pct(P.passed[m.id].score)}. You can practise again at any time.`:ALWAYS_PASS[g.type]?"You pass as soon as you have solved the task completely.":"You need at least 80% correct answers to pass."}</p></div>
+      <div class="game-body" id="game"></div>
+    </section>
+    <div id="passbar"></div>
+    <nav class="pager" id="pager" aria-label="Module navigation"></nav>
+  </div>`;
+  document.querySelectorAll("[data-widget]").forEach(w=>WIDGETS[w.dataset.widget](w));
+  GAMES[g.type]($("#game"),g,s=>onPass(m,s));
+  renderPager(m);
+}
+function renderPager(m){
+  const prev=MODULES[m.idx-1], nx=MODULES[m.idx+1];
+  let h=prev?`<button class="pg" data-go="${prev.id}"><small>${ICON.back} Module ${prev.num}</small><b>${prev.title}</b></button>`:"";
+  if(nx){const open=isUnlocked(nx);
+    h+=open?`<button class="pg next" data-go="${nx.id}"><small>Module ${nx.num} ${ICON.arrow}</small><b>${nx.title}</b></button>`
+           :`<button class="pg next" disabled><small>${ICON.lock} Module ${nx.num} · unlocks after the knowledge check</small><b>${nx.title}</b></button>`}
+  else h+=`<button class="pg next" data-go="home"><small>End of course ${ICON.arrow}</small><b>Back to the overview</b></button>`;
+  $("#pager").innerHTML=h;
+}
+function onPass(m,score){
+  const first=!isPassed(m), prev=first?0:P.passed[m.id].score;
+  P.passed[m.id]={score:Math.max(score,prev)}; persist();
+  renderNav(m); renderPager(m);
+  $("#modStatus").className="ok"; $("#modStatus").innerHTML=ICON.check+" Completed";
+  $("#already").textContent=`Passed with ${pct(P.passed[m.id].score)}. You can practise again at any time.`;
+  const nx=MODULES[m.idx+1];
+  setTimeout(()=>celebrate(m,score,first),380);
+  $("#passbar").innerHTML=`<div class="passbar glass"><span class="result-ico" style="background:var(--good)">${ICON.check}</span><div><b>Module ${m.num} completed</b><p>${nx?`Module ${nx.num}, “${nx.title}”, is now unlocked. This module stays open for review at any time.`:`You have completed all ${N} modules. All content stays open for reference.`}</p></div><button class="btn dark" data-go="${nx?nx.id:"home"}">${nx?"Continue to module "+nx.num:"Back to the overview"} ${ICON.arrow}</button></div>`;
+}
+
+/* ---------- Celebration ---------- */
+let celRaf=0;
+function celebrate(m,score,first){
+  document.querySelector(".celebrate")?.remove(); cancelAnimationFrame(celRaf);
+  const nx=MODULES[m.idx+1], perfect=score>=.999, reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const w=document.createElement("div"); w.className="celebrate"; w.style.setProperty("--tone",m.tone);
+  w.innerHTML=`<canvas aria-hidden="true"></canvas>
+  <div class="cel-card" role="dialog" aria-modal="true" aria-labelledby="celT">
+    <div class="medal"><svg viewBox="0 0 64 64" aria-hidden="true"><circle class="medal-ring" cx="32" cy="32" r="29"/><path class="medal-check" d="M19 33.5l8.5 8.5L45.5 23"/></svg></div>
+    <span class="label">Module ${m.num} · ${m.title}</span>
+    <h2 id="celT">${perfect?"Perfect – <em>all correct!</em>":"Well done – <em>passed!</em>"}</h2>
+    <div class="cel-score"><b id="celNum">0</b><span>%</span></div>
+    <p class="cel-sub">${perfect?"Solved without a single mistake. Great work!":"You passed the knowledge check."}</p>
+    ${first&&nx?`<div class="unlock" style="--tone:${nx.tone}"><span class="badge u-badge"><span class="u-lock">${ICON.lock}</span><span class="u-num">${nx.num}</span></span><div><small>Newly unlocked</small><b>Module ${nx.num} · ${nx.title}</b></div></div>`
+     :first&&!nx?`<div class="unlock" style="--tone:var(--c2)"><span class="badge u-badge"><span class="u-lock">${ICON.lock}</span><span class="u-num">${ICON.trophy}</span></span><div><small>All ${N} modules passed</small><b>Course complete</b></div></div>`:""}
+    <div class="cel-actions"><button class="btn dark" data-cel="${nx?nx.id:"home"}">${nx?"Continue to module "+nx.num:"Back to the overview"} ${ICON.arrow}</button><button class="btn" data-cel="stay">Stay here</button></div>
+  </div>`;
+  document.body.appendChild(w);
+  const close=go2=>{if(w.classList.contains("out"))return;w.classList.add("out");document.removeEventListener("keydown",esc);setTimeout(()=>{cancelAnimationFrame(celRaf);w.remove();if(go2)go(go2)},330)};
+  const esc=e=>{if(e.key==="Escape")close()};
+  document.addEventListener("keydown",esc);
+  w.addEventListener("click",e=>{const b=e.target.closest("[data-cel]");if(b)return close(b.dataset.cel==="stay"?null:b.dataset.cel);if(!e.target.closest(".cel-card"))close()});
+  w.querySelector("[data-cel]").focus({preventScroll:true});
+  const target=Math.round(score*100), numEl=w.querySelector("#celNum"), s0=performance.now()+(reduce?0:1100);
+  (function tick(now){const k=Math.min(1,Math.max(0,(now-s0)/900));numEl.textContent=Math.round(target*(1-Math.pow(1-k,3)));if(k<1&&w.isConnected)requestAnimationFrame(tick)})(performance.now());
+  if(!reduce)plasmidFx(w.querySelector("canvas"),w.querySelector(".medal"),perfect);
+}
+function plasmidFx(cv,medal,perfect){
+  const ctx=cv.getContext("2d"), dpr=Math.min(devicePixelRatio||1,2), css=getComputedStyle(document.documentElement);
+  const cols=["--c1","--c2","--c3","--c4","--c5","--c6"].map(v=>css.getPropertyValue(v).trim());
+  const r=document.documentElement, dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme: dark)").matches;
+  let W=innerWidth,H=innerHeight; cv.width=W*dpr; cv.height=H*dpr; cv.style.width=W+"px"; cv.style.height=H+"px"; ctx.setTransform(dpr,0,0,dpr,0,0);
+  const mb=medal.getBoundingClientRect(), cx=mb.left+mb.width/2, cy=mb.top+mb.height/2;
+  const PAIRS=40, CONVERGE=.95, start=performance.now(); let last=start, parts=[], rings=[], burst=false;
+  const ease=k=>1-Math.pow(1-k,3);
+  function spawn(){
+    const n=perfect?150:100;
+    for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2, sp=160+Math.random()*(perfect?640:480);
+      parts.push({x:cx+Math.cos(a)*40,y:cy+Math.sin(a)*40,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,c:cols[i%6],s:1.2+Math.random()*2.6,life:1.1+Math.random()*1.3,age:0,star:Math.random()<.22,tw:Math.random()*6})}
+    rings.push({r:52,age:0,c:cols[1]},{r:52,age:-.12,c:cols[0]},{r:52,age:-.24,c:cols[2]});
+  }
+  function star(x,y,s){ctx.beginPath();ctx.moveTo(x,y-s*2.4);ctx.quadraticCurveTo(x,y,x+s*2.4,y);ctx.quadraticCurveTo(x,y,x,y+s*2.4);ctx.quadraticCurveTo(x,y,x-s*2.4,y);ctx.quadraticCurveTo(x,y,x,y-s*2.4);ctx.fill()}
+  function frame(now){
+    const t=(now-start)/1000, dt=Math.min(.05,(now-last)/1000); last=now;
+    ctx.clearRect(0,0,W,H);
+    ctx.globalCompositeOperation=dark?"lighter":"source-over";
+    if(t<CONVERGE+.15){
+      const k=Math.min(1,t/CONVERGE), e=ease(k), R=Math.min(W,H)*.40*(1-e)+50*e, rot=t*2.4+e*1.2, amp=13*(1-e*.7);
+      const fade=t<CONVERGE?Math.min(1,t*5):Math.max(0,1-(t-CONVERGE)/.15);
+      const pts=[];
+      for(let i=0;i<PAIRS;i++){const th=i/PAIRS*Math.PI*2+rot, wv=Math.sin(i/PAIRS*Math.PI*2*5+t*7)*amp;
+        pts.push([cx+Math.cos(th)*(R+wv),cy+Math.sin(th)*(R+wv),cx+Math.cos(th)*(R-wv),cy+Math.sin(th)*(R-wv),i])}
+      ctx.lineWidth=1; ctx.globalAlpha=.28*fade; ctx.strokeStyle=cols[1];
+      pts.forEach(p=>{ctx.beginPath();ctx.moveTo(p[0],p[1]);ctx.lineTo(p[2],p[3]);ctx.stroke()});
+      [[0,1],[2,3]].forEach(([a,b],si)=>{ctx.globalAlpha=.55*fade;ctx.lineWidth=2;ctx.strokeStyle=cols[si?4:0];ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p[a],p[b]):ctx.moveTo(p[a],p[b]));ctx.closePath();ctx.stroke()});
+      pts.forEach(p=>{ctx.globalAlpha=fade;ctx.fillStyle=cols[p[4]%6];ctx.beginPath();ctx.arc(p[0],p[1],2.6,0,7);ctx.fill();ctx.fillStyle=cols[(p[4]+3)%6];ctx.beginPath();ctx.arc(p[2],p[3],2.6,0,7);ctx.fill()});
+    }
+    if(t>=CONVERGE&&!burst){burst=true;spawn()}
+    rings.forEach(g=>{g.age+=dt;if(g.age<0||g.age>1.1)return;const k=ease(Math.min(1,g.age/1.1));ctx.globalAlpha=(1-k)*.55;ctx.strokeStyle=g.c;ctx.lineWidth=2*(1-k)+.5;ctx.beginPath();ctx.arc(cx,cy,g.r+k*Math.max(W,H)*.32,0,7);ctx.stroke()});
+    parts.forEach(p=>{p.age+=dt;if(p.age>p.life)return;const d=Math.pow(.04,dt);p.vx*=d;p.vy*=d;p.vy+=26*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;
+      const k=p.age/p.life;ctx.globalAlpha=(1-k)*(p.star?.6+.4*Math.sin(p.age*14+p.tw):.85);ctx.fillStyle=p.c;
+      if(p.star)star(p.x,p.y,p.s*(1-k*.5));else{ctx.beginPath();ctx.arc(p.x,p.y,p.s*(1-k*.4),0,7);ctx.fill()}});
+    ctx.globalAlpha=1;
+    if(t<3.6&&cv.isConnected)celRaf=requestAnimationFrame(frame);else ctx.clearRect(0,0,W,H);
+  }
+  celRaf=requestAnimationFrame(frame);
+}
+
+/* ---------- Content widgets ---------- */
+const WIDGETS={
+  pairs(w){const top="ATGCGTAC",P2={A:"T",T:"A",G:"C",C:"G"};
+    w.outerHTML=`<div class="pairs" role="img" aria-label="Base pairs: A–T with two, G–C with three hydrogen bonds">${top.split("").map(b=>{const n=b==="G"||b==="C"?3:2;return `<div class="pair"><span class="nt-tile b-${b}">${b}</span><span class="hb">${"<i></i>".repeat(n)}</span><span class="nt-tile b-${P2[b]}">${P2[b]}</span></div>`}).join("")}</div>
+    <div class="legend"><span class="b-A"><i></i>Adenine</span><span class="b-T"><i></i>Thymine</span><span class="b-G"><i></i>Guanine</span><span class="b-C"><i></i>Cytosine</span><span>Dashes = hydrogen bonds</span></div>`},
+  codons(w){w.outerHTML=codonTable()},
+  gel(w){w.outerHTML=gelSVG(GEL)},
+  lac(w){let lac=false,glc=true;
+    function draw(){
+      const bound=!lac, cap=!glc, lvl=!lac?0:glc?1:3;
+      const txt=!lac?(cap?"CAP is active, but the repressor blocks the operator. Without lactose the genes stay off.":"Without lactose, the repressor binds to the operator. RNA polymerase can’t get past – the genes stay off.")
+        :glc?"Allolactose has released the repressor. But because glucose is present, cAMP stays low and CAP doesn’t help: the genes are only weakly transcribed."
+        :"The repressor has let go, and CAP–cAMP strengthens the binding of RNA polymerase. The cell makes plenty of β-galactosidase to use the lactose.";
+      w.innerHTML=`<div class="sim">
+        <div class="sim-ctl"><button class="toggle" data-t="lac" aria-pressed="${lac}"><span class="sw"></span>Lactose present</button><button class="toggle" data-t="glc" aria-pressed="${glc}"><span class="sw"></span>Glucose present</button></div>
+        <div class="operon"><div class="op-row">
+          <span class="op reg">lacI</span>
+          <span class="op p">Promoter</span><span class="op o">Operator</span>
+          <span class="op g">lacZ</span><span class="op g">lacY</span><span class="op g">lacA</span>
+          <span class="float f-rep" style="left:${bound?"94px":"0px"};${bound?"":"bottom:46px;"}">${bound?"Repressor":"Repressor + allolactose"}</span>
+          ${cap?`<span class="float f-cap" style="left:86px;bottom:78px">CAP–cAMP</span>`:""}
+          ${lvl?`<span class="float f-pol" style="left:${lvl===3?"250px":"200px"}">RNA polymerase →</span>`:""}
+        </div></div>
+        <div class="sim-out">
+          <div><small>Repressor</small><b>${bound?"bound to the operator":"released"}</b></div>
+          <div><small>CAP–cAMP</small><b>${cap?"active (low glucose)":"inactive (high glucose)"}</b></div>
+          <div><small>Expression of the lac genes</small><b>${["Off","Weak","","Strong"][lvl]}</b><div class="lvl"><i class="${lvl>=1?"on":""}"></i><i class="${lvl>=2?"on":""}"></i><i class="${lvl>=3?"on":""}"></i></div></div>
+        </div>
+        <p class="sim-text">${txt}</p></div>`;
+    }
+    w.onclick=e=>{const t=e.target.closest("[data-t]");if(!t)return;if(t.dataset.t==="lac")lac=!lac;else glc=!glc;draw()};
+    draw()},
+  pcr(w){
+    const fmt=x=>{const o={maximumFractionDigits:2};if(x<1e6)return x.toLocaleString("en-US");if(x<1e9)return (x/1e6).toLocaleString("en-US",o)+" million";if(x<1e12)return (x/1e9).toLocaleString("en-US",o)+" billion";return (x/1e12).toLocaleString("en-US",o)+" trillion"};
+    w.innerHTML=`<div class="pcr"><div class="pcr-top"><span><b id="pcrOut"></b></span><span class="label" id="pcrN"></span></div>
+      <label for="pcrRange" class="score-line">Number of cycles</label><input type="range" id="pcrRange" min="0" max="35" value="30">
+      <div class="track"><i id="pcrBar"></i></div>
+      <small>Theoretical value assuming perfect doubling. In practice, efficiency drops after about 30 cycles because primers and dNTPs run low.</small></div>`;
+    const upd=()=>{const n=+$("#pcrRange",w).value;$("#pcrOut",w).textContent=fmt(2**n)+(2**n===1?" copy":" copies");$("#pcrN",w).textContent=`${n} ${plural(n,"cycle","cycles")} · 2^${n}`;$("#pcrBar",w).style.width=(n/35*100)+"%"};
+    $("#pcrRange",w).addEventListener("input",upd);upd()}
+};
+function codonTable(){
+  let h=`<div class="codon-tbl"><table><thead><tr><th>1st base</th>${BASES.split("").map(b=>`<th>2nd base: ${b}</th>`).join("")}</tr></thead><tbody>`;
+  for(const b1 of BASES){h+=`<tr><th class="fb">${b1}</th>`;
+    for(const b2 of BASES){h+=`<td>`;for(const b3 of BASES){const c=b1+b2+b3,a=code(c);h+=`<div class="cd ${c==="AUG"?"start":a==="*"?"stop":""}"><span>${c}</span><b>${AAN[a][0]}</b></div>`}h+=`</td>`}
+    h+=`</tr>`}
+  return h+`</tbody></table></div>`;
+}
+
+/* ---------- Games ---------- */
+function result(ok,title,text,retry){
+  return `<div class="result ${ok?"ok":"no"}" role="status"><span class="result-ico">${ok?ICON.check:ICON.redo}</span><div><b>${title}</b><p>${text}</p></div>${retry?`<button class="btn small" data-retry>${retry}</button>`:""}</div>`;
+}
+const GAMES={
+  mc(el,g,done){
+    let ans,fired;
+    const reset=()=>{ans=g.q.map(()=>null);fired=false;draw()};
+    function draw(){
+      const n=g.q.length, answered=ans.filter(a=>a!==null).length, right=ans.filter((a,i)=>a===g.q[i].a).length;
+      let h=g.q.map((q,i)=>{const a=ans[i];return `<div class="q"><div class="q-head"><span class="q-n">${i+1}</span><p>${q.t}</p></div>
+        ${q.fig==="GEL"?`<div class="q-fig">${gelSVG(GEL)}</div>`:""}
+        <div class="opts">${q.o.map((o,k)=>`<button class="opt ${a===null?"":k===q.a?"right":k===a?"wrong":"dim"}" data-q="${i}" data-k="${k}" ${a!==null?"disabled":""}><span class="key">${"abcd"[k]}</span><span>${o}</span></button>`).join("")}</div>
+        ${a!==null?`<p class="explain"><b class="${a===q.a?"ok":"no"}">${a===q.a?"Correct.":"Not quite."}</b> ${q.e}</p>`:""}</div>`}).join("");
+      h+=`<div class="game-foot"><span class="score-line">${answered} of ${n} answered · ${right} correct</span></div>`;
+      if(answered===n){const s=right/n,ok=s>=PASS;
+        h+=ok?result(true,"Passed!",`${right} of ${n} questions correct.`,"Practise again")
+             :result(false,"Not quite yet",`${right} of ${n} correct. You need at least ${Math.ceil(PASS*n)}. Read through the explanations and try again.`,"Try again");
+        if(ok&&!fired){fired=true;setTimeout(()=>done(s))}}
+      el.innerHTML=h;
+    }
+    el.onclick=e=>{const b=e.target.closest("[data-q]");if(b){const i=+b.dataset.q;if(ans[i]===null){ans[i]=+b.dataset.k;draw();el.querySelectorAll(".q")[i].querySelector(".explain")?.scrollIntoView({block:"nearest",behavior:"smooth"})}return}
+      if(e.target.closest("[data-retry]")){reset();el.scrollIntoView({block:"start",behavior:"smooth"})}};
+    reset();
+  },
+  match(el,g,done){
+    const n=g.pairs.length; let L,R,matched,selL,selR,miss,wrong,fired;
+    const reset=()=>{L=shuffle([...Array(n).keys()]);R=shuffle([...Array(n).keys()]);matched=new Set;selL=selR=null;miss=0;wrong=null;fired=false;draw()};
+    function draw(){
+      const col=(side,order)=>order.map(i=>{const m=matched.has(i),s=(side==="l"?selL:selR)===i,w=wrong&&wrong[side]===i;
+        return `<button class="tile ${m?"matched":""} ${s?"sel":""} ${w?"wrong":""}" data-side="${side}" data-i="${i}" ${m?"disabled":""} aria-pressed="${s}">${g.pairs[i][side==="l"?0:1]}</button>`}).join("");
+      let h=`<div class="match"><div class="match-col terms-col">${col("l",L)}</div><div class="match-col">${col("r",R)}</div></div>
+        <div class="game-foot"><span class="score-line">${matched.size} of ${n} pairs found · ${miss} ${plural(miss,"miss","misses")}</span></div>`;
+      if(matched.size===n){const s=n/(n+miss);h+=result(true,"All pairs found!",miss?`With ${miss} ${plural(miss,"miss","misses")} – score ${pct(s)}.`:"Without a single miss.","Play again");if(!fired){fired=true;setTimeout(()=>done(s))}}
+      el.innerHTML=h;
+    }
+    el.onclick=e=>{
+      if(e.target.closest("[data-retry]"))return reset();
+      const b=e.target.closest("[data-side]");if(!b||wrong)return;
+      const i=+b.dataset.i;if(b.dataset.side==="l")selL=selL===i?null:i;else selR=selR===i?null:i;
+      if(selL!==null&&selR!==null){if(selL===selR){matched.add(selL);selL=selR=null}else{miss++;wrong={l:selL,r:selR};selL=selR=null;setTimeout(()=>{wrong=null;draw()},700)}}
+      draw();
+    };
+    reset();
+  },
+  order(el,g,done){
+    const n=g.items.length; let ord,marks,tries,fired,solved=false;
+    const reset=()=>{do{ord=shuffle([...Array(n).keys()])}while(ord.every((v,i)=>v===i));marks=null;tries=0;fired=false;draw()};
+    const items=()=>[...el.querySelectorAll(".order-item")];
+    function draw(){
+      solved=!!(marks&&marks.every(Boolean));
+      let h=`<ol class="order">${ord.map((it,pos)=>`<li class="order-item ${marks?(marks[pos]?"right":"wrong"):""} ${solved?"locked":""}" data-pos="${pos}" ${solved?"":`tabindex="0" aria-label="Step ${pos+1}: ${g.items[it].replace(/"/g,"")}. Drag, or use the up and down arrow keys to move."`}><span class="order-n">${pos+1}</span><span class="order-t">${g.items[it]}</span>${solved?"":`<span class="grip" aria-hidden="true">${ICON.grip}</span>`}</li>`).join("")}</ol>`;
+      if(solved){const s=Math.max(.5,1-(tries-1)*.15);h+=result(true,"Correct order!",tries===1?"Right on the first try.":`Solved after ${tries} attempts – score ${pct(s)}.`,"Play again");if(!fired){fired=true;setTimeout(()=>done(s))}}
+      else h+=`<div class="game-foot"><span class="score-line">${marks?`${marks.filter(Boolean).length} of ${n} are in the right place. Drag the ones marked in red.`:"Hold a step and drag it up or down."}</span><button class="btn dark small" data-check>Check order</button></div>`;
+      el.innerHTML=h;
+    }
+    function moveTo(from,to){if(to!==from){const [x]=ord.splice(from,1);ord.splice(to,0,x);marks=null}draw()}
+    function beginDrag(li,startPageY){
+      const list=li.parentElement, its=items(), from=its.indexOf(li);
+      const rects=its.map(x=>{const r=x.getBoundingClientRect();return{top:r.top+scrollY,h:r.height}});
+      const sh=rects[from].h+(parseFloat(getComputedStyle(list).rowGap)||8);
+      let to=from, lastY=startPageY-scrollY, raf;
+      li.classList.add("dragging"); list.classList.add("dragging-list");
+      const update=()=>{const dy=lastY+scrollY-startPageY;
+        li.style.transform=`translateY(${dy}px) scale(1.02)`;
+        const c=rects[from].top+rects[from].h/2+dy; to=0; rects.forEach((r,i)=>{if(i!==from&&c>r.top+r.h/2)to++});
+        its.forEach((x,i)=>{if(i===from)return;let s=0;if(from<to&&i>from&&i<=to)s=-sh;else if(from>to&&i>=to&&i<from)s=sh;x.style.transform=s?`translateY(${s}px)`:""})};
+      const auto=()=>{const m=80;let v=0;if(lastY<m)v=-(m-lastY)/6;else if(lastY>innerHeight-m)v=(lastY-(innerHeight-m))/6;if(v){scrollBy(0,v);update()}raf=requestAnimationFrame(auto)};
+      raf=requestAnimationFrame(auto);
+      return{move(cy){lastY=cy;update()},end(){
+        cancelAnimationFrame(raf);const vis=li.getBoundingClientRect().top;moveTo(from,to);
+        const nl=items()[to];if(!nl)return;const d=vis-nl.getBoundingClientRect().top;
+        nl.animate([{transform:`translateY(${d}px) scale(1.02)`},{transform:"none"}],{duration:260,easing:"cubic-bezier(.2,.8,.2,1)"});
+        nl.classList.add("landed");setTimeout(()=>nl.classList.remove("landed"),500)}};
+    }
+    el.onpointerdown=e=>{
+      const li=e.target.closest(".order-item");if(!li||solved||e.button>0)return;
+      const touchHold=e.pointerType!=="mouse"&&!e.target.closest(".grip"), id=e.pointerId, sx=e.clientX, sy=e.clientY;
+      let started=false, drag=null, timer=null;
+      const begin=()=>{started=true;drag=beginDrag(li,sy+scrollY);navigator.vibrate?.(8)};
+      const cleanup=()=>{clearTimeout(timer);removeEventListener("pointermove",mv);removeEventListener("pointerup",up);removeEventListener("pointercancel",up);el.removeEventListener("touchmove",tm)};
+      const mv=ev=>{if(ev.pointerId!==id)return;
+        if(!started){const dist=Math.hypot(ev.clientX-sx,ev.clientY-sy);if(touchHold){if(dist>8)cleanup();return}if(dist>4)begin();else return}
+        ev.preventDefault();drag.move(ev.clientY)};
+      const up=ev=>{if(ev.pointerId!==id)return;cleanup();if(started)drag.end()};
+      const tm=ev=>{if(started)ev.preventDefault()};
+      if(touchHold)timer=setTimeout(begin,220);else if(e.pointerType!=="mouse")begin();
+      addEventListener("pointermove",mv,{passive:false});addEventListener("pointerup",up);addEventListener("pointercancel",up);el.addEventListener("touchmove",tm,{passive:false});
+    };
+    el.oncontextmenu=e=>{if(e.target.closest(".order-item"))e.preventDefault()};
+    el.onkeydown=e=>{const li=e.target.closest(".order-item");if(!li||solved)return;const p=+li.dataset.pos;
+      const q=e.key==="ArrowUp"?p-1:e.key==="ArrowDown"?p+1:-1;if(q<0||q>=n)return;e.preventDefault();moveTo(p,q);items()[q]?.focus()};
+    el.onclick=e=>{
+      if(e.target.closest("[data-retry]"))return reset();
+      if(e.target.closest("[data-check]")){tries++;marks=ord.map((v,i)=>v===i);draw()}
+    };
+    reset();
+  },
+  cloze(el,g,done){
+    const parts=g.text.split(/\{\{(.+?)\}\}/), answers=parts.filter((_,i)=>i%2);
+    const bank=[...new Set([...answers,...(g.extra||[])])].sort((a,b)=>a.localeCompare(b,"en"));
+    let gi=0, fired=false;
+    el.innerHTML=`<div class="cloze">${parts.map((p,i)=>{if(!(i%2))return p;const k=gi++;return `<select class="gap" id="gap-${k}" data-gap="${k}" aria-label="Blank ${k+1}"><option value="">…</option>${bank.map(w=>`<option>${w}</option>`).join("")}</select>`}).join("")}</div>
+      <div class="game-foot"><span class="score-line" id="clozeInfo">Choose a word for each blank.</span><button class="btn dark small" data-check>Check answers</button></div><div id="clozeRes"></div>`;
+    const sels=[...el.querySelectorAll(".gap")];
+    el.onchange=e=>{if(e.target.matches(".gap"))e.target.classList.remove("right","wrong")};
+    el.onclick=e=>{if(!e.target.closest("[data-check]"))return;
+      let right=0;sels.forEach((s,i)=>{const ok=s.value===answers[i];if(ok)right++;s.classList.toggle("right",ok);s.classList.toggle("wrong",!ok)});
+      const n=answers.length,sc=right/n,ok=sc>=PASS;
+      $("#clozeInfo",el).textContent=`${right} of ${n} blanks correct`;
+      $("#clozeRes",el).innerHTML=ok?result(true,"Passed!",`${right} of ${n} blanks correct.`):result(false,"Not quite yet",`${right} of ${n} correct. Change the blanks marked in red and check again.`);
+      if(ok&&!fired){fired=true;done(sc)}};
+  },
+  complement(el,g,done){
+    const top=g.strand.split(""), n=top.length, PR={A:"T",T:"A",G:"C",C:"G"};
+    let val=Array(n).fill(""), cur=0, marks=null, passed=false;
+    el.tabIndex=-1;
+    function draw(){
+      el.innerHTML=`<div class="strand-wrap"><div class="strand">
+        <div class="strand-row"><span class="end">5′</span>${top.map(b=>`<span class="base b-${b}">${b}</span>`).join("")}<span class="end">3′</span></div>
+        <div class="strand-row"><span class="end">3′</span>${val.map((v,i)=>`<button class="base slot ${v?"filled b-"+v:""} ${i===cur&&!passed?"cur":""} ${marks?(marks[i]?"right":"wrong"):""}" data-cell="${i}" aria-label="Position ${i+1}${v?": "+v:", empty"}" ${passed?"disabled":""}>${v}</button>`).join("")}<span class="end">5′</span></div>
+      </div></div>
+      ${passed?"":`<div class="keypad">${"ATGC".split("").map(b=>`<button class="key-b b-${b}" data-b="${b}" aria-label="Base ${b}">${b}</button>`).join("")}<button class="key-b back" data-back aria-label="Delete last base" title="Delete">${ICON.del}</button></div>`}
+      <div class="game-foot"><span class="score-line">${marks?`${marks.filter(Boolean).length} of ${n} bases correct`:`${val.filter(Boolean).length} of ${n} bases placed`}</span>${passed?"":`<button class="btn dark small" data-check ${val.includes("")?"disabled":""}>Check strand</button>`}</div>
+      <div id="compRes"></div>`;
+    }
+    function put(b){if(passed)return;val[cur]=b;marks=null;if(cur<n-1)cur++;draw()}
+    function back(){if(passed)return;if(!val[cur]&&cur>0)cur--;val[cur]="";marks=null;draw()}
+    el.onclick=e=>{
+      const k=e.target.closest("[data-b]");if(k)return put(k.dataset.b);
+      if(e.target.closest("[data-back]"))return back();
+      const c=e.target.closest("[data-cell]");if(c){cur=+c.dataset.cell;draw();return}
+      if(e.target.closest("[data-check]")){marks=val.map((v,i)=>v===PR[top[i]]);const r=marks.filter(Boolean).length,s=r/n,ok=s>=PASS;draw();
+        $("#compRes",el).innerHTML=ok?result(true,"Passed!",r===n?"Every base is paired correctly.":`${r} of ${n} correct. Marked in red: the base doesn’t fit there.`):result(false,"Not quite yet",`${r} of ${n} correct. Remember: A pairs with T, G with C. Tap a red position to change it.`);
+        if(ok){passed=true;const res=$("#compRes",el).innerHTML;draw();$("#compRes",el).innerHTML=res;done(s)}}
+    };
+    el.onkeydown=e=>{const k=e.key.toUpperCase();if("ATGC".includes(k)&&k.length===1){e.preventDefault();put(k)}else if(e.key==="Backspace"){e.preventDefault();back()}};
+    draw();
+  },
+  sort(el,g,done){
+    let sel=g.items.map(()=>null), marks=null, fired=false;
+    function draw(){
+      el.innerHTML=`<div class="sort">${g.items.map((it,i)=>`<div class="sort-item ${marks?(marks[i]?"right":"wrong"):""}"><p>${it[0]}</p><div class="chips" role="group" aria-label="Choose a category">${g.cats.map((c,k)=>`<button class="chip-b ${sel[i]===k?"on":""}" data-i="${i}" data-k="${k}" aria-pressed="${sel[i]===k}">${c}</button>`).join("")}</div></div>`).join("")}</div>
+      <div class="game-foot"><span class="score-line">${marks?`${marks.filter(Boolean).length} of ${g.items.length} classified correctly`:`${sel.filter(x=>x!==null).length} of ${g.items.length} classified`}</span><button class="btn dark small" data-check ${sel.includes(null)?"disabled":""}>Check answers</button></div><div id="sortRes"></div>`;
+    }
+    el.onclick=e=>{
+      const c=e.target.closest("[data-k]");if(c){sel[+c.dataset.i]=+c.dataset.k;marks=null;draw();return}
+      if(e.target.closest("[data-check]")){marks=g.items.map((it,i)=>sel[i]===it[1]);const r=marks.filter(Boolean).length,n=g.items.length,s=r/n,ok=s>=PASS;draw();
+        $("#sortRes",el).innerHTML=ok?result(true,"Passed!",`${r} of ${n} classified correctly.`):result(false,"Not quite yet",`${r} of ${n} correct. Tip: use the codon table from module 6 to check whether the amino acid changes.`);
+        if(ok&&!fired){fired=true;done(s)}}
+    };
+    draw();
+  },
+  codon(el,g,done){
+    const cods=g.mrna.split(" "), keys=Object.keys(AAN).filter(k=>k!=="*").sort((a,b)=>AAN[a][0].localeCompare(AAN[b][0])).concat("*");
+    let fired=false;
+    el.innerHTML=`<div class="codons">${cods.map((c,i)=>`<div class="codon" id="cod-${i}"><small>Codon ${i+1}</small><span class="cseq">${c.split("").map(b=>`<span class="b-${b}">${b}</span>`).join("")}</span><select id="codsel-${i}" data-c="${i}" aria-label="Amino acid for ${c}"><option value="">Amino acid …</option>${keys.map(k=>`<option value="${k}">${AAN[k][0]} – ${AAN[k][1]}</option>`).join("")}</select></div>`).join("")}</div>
+      <details class="hint"><summary>Show codon table</summary>${codonTable()}</details>
+      <div class="game-foot"><span class="score-line" id="codInfo">Read the mRNA from 5′ to 3′.</span><button class="btn dark small" data-check>Check translation</button></div><div id="codRes"></div>`;
+    el.onchange=e=>{const s=e.target.closest("[data-c]");if(s)$("#cod-"+s.dataset.c,el).classList.remove("right","wrong")};
+    el.onclick=e=>{if(!e.target.closest("[data-check]"))return;
+      let r=0;cods.forEach((c,i)=>{const ok=$("#codsel-"+i,el).value===code(c);if(ok)r++;$("#cod-"+i,el).classList.toggle("right",ok);$("#cod-"+i,el).classList.toggle("wrong",!ok)});
+      const n=cods.length,s=r/n,ok=s>=PASS;
+      $("#codInfo",el).textContent=`${r} of ${n} codons translated correctly`;
+      $("#codRes",el).innerHTML=ok?result(true,"Passed!",`Your peptide: ${cods.map(c=>AAN[code(c)][0]).join("–")}. The last codon ends translation.`):result(false,"Not quite yet",`${r} of ${n} correct. First base on the left, second at the top, third inside the cell.`);
+      if(ok&&!fired){fired=true;done(s)}};
+  },
+  cut(el,g,done){
+    let r,miss,wrong,solved,fired;
+    const reset=()=>{r=0;miss=0;wrong=null;solved=false;fired=false;draw()};
+    function draw(){
+      const R=g.rounds[r], s=R.seq.split(""), last=r===g.rounds.length-1;
+      const cls=i=>(R.marks||[]).filter(m=>i>=m.from&&i<m.to).map(m=>m.cls).join(" ");
+      let sq=`<span class="end">5′</span>`;
+      s.forEach((b,i)=>{if(i>0)sq+=solved&&i===R.cut?`<span class="cutmark" aria-label="Cut site">${ICON.scissors}</span>`:`<button class="gap-b ${wrong===i?"wrong":""}" data-gap="${i}" aria-label="Cut between base ${i} and ${i+1}" ${solved?"disabled":""}></button>`;sq+=`<span class="nt ${cls(i)}">${b}</span>`});
+      sq+=`<span class="end">3′</span>`;
+      let h=`<div class="round-head"><span class="label">Round ${r+1} of ${g.rounds.length}</span><p>${R.task}</p></div>
+        <div class="seq-scroll"><div class="seq">${sq}</div></div>
+        ${R.legend?`<div class="legend"><span><i></i>Target sequence (20 nt)</span>${(R.marks||[]).some(m=>m.cls==="pam")?`<span><i style="background:var(--c4)"></i>PAM</span>`:""}</div>`:""}
+        ${solved?"":`<details class="hint"><summary>Show hint</summary><p>${R.hint}</p></details>`}
+        <div class="game-foot"><span class="score-line ${solved?"ok":wrong!==null?"no":""}">${solved?R.ok:wrong!==null?"It doesn’t cut here. Try another spot.":"Tap the gap between two bases."}</span>${solved&&!last?`<button class="btn dark small" data-next>Next round ${ICON.arrow}</button>`:""}</div>`;
+      if(solved&&last){const sc=g.rounds.length/(g.rounds.length+miss);h+=result(true,"All cut sites found!",miss?`With ${miss} ${plural(miss,"miss","misses")} – score ${pct(sc)}.`:"Without a single miss.","Play again");if(!fired){fired=true;setTimeout(()=>done(sc))}}
+      el.innerHTML=h;
+    }
+    el.onclick=e=>{
+      if(e.target.closest("[data-retry]"))return reset();
+      if(e.target.closest("[data-next]")){r++;solved=false;wrong=null;draw();return}
+      const gp=e.target.closest("[data-gap]");if(!gp||solved)return;
+      const i=+gp.dataset.gap;if(i===g.rounds[r].cut){solved=true;wrong=null}else{miss++;wrong=i}draw();
+    };
+    reset();
+  }
+};
+
+/* ---------- Routing & events ---------- */
+function route(){
+  const id=location.hash.slice(1), m=MODULES.find(x=>x.id===id);
+  renderNav(m||null);
+  if(m)isUnlocked(m)?renderModule(m):renderLocked(m);else renderHome();
+  $("#topTitle").textContent=m?`${m.num} · ${m.title}`:"Overview";
+  document.body.classList.remove("menu");
+}
+function go(id){
+  if(id==="home"){if(location.hash)history.pushState(null,"",location.pathname+location.search);route()}
+  else if(location.hash!=="#"+id)location.hash=id;else route();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+document.addEventListener("click",e=>{
+  const g=e.target.closest("[data-go]");if(g&&!g.disabled){go(g.dataset.go);return}
+  const sc=e.target.closest("[data-sec]");if(sc){document.body.classList.remove("menu");document.getElementById(sc.dataset.sec)?.scrollIntoView({behavior:"smooth",block:"start"});return}
+  const s=e.target.closest("[data-scroll]");if(s){document.getElementById(s.dataset.scroll)?.scrollIntoView({behavior:"smooth",block:"start"});return}
+  if(e.target.closest("#resetBtn"))return renderReset(true);
+  if(e.target.closest("#resetNo"))return renderReset(false);
+  if(e.target.closest("#resetYes")){P={passed:{},unlockAll:false};persist();go("home");return}
+  if(e.target.closest("#unlockBtn")){P.unlockAll=!P.unlockAll;persist();route()}
+});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")document.body.classList.remove("menu")});
+window.addEventListener("hashchange",route);
+window.addEventListener("popstate",route);
+$("#menuBtn").innerHTML=ICON.menu;
+$("#themeBtn").innerHTML=ICON.moon;
+$("#menuBtn").addEventListener("click",()=>document.body.classList.add("menu"));
+$("#scrim").addEventListener("click",()=>document.body.classList.remove("menu"));
+$("#wikiLink").href="#";
+try{const t=localStorage.getItem("lp-theme");if(t)document.documentElement.dataset.theme=JSON.parse(t)}catch(e){}
+$("#themeBtn").addEventListener("click",()=>{
+  const r=document.documentElement,dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme: dark)").matches;
+  r.dataset.theme=dark?"light":"dark";try{localStorage.setItem("lp-theme",JSON.stringify(r.dataset.theme))}catch(e){}
+});
+route();
+</script>
